@@ -85,44 +85,30 @@ components.html(tradingview_html, height=700)
 
 import feedparser # Add this to your imports at the very top
 
-from newsplease import NewsPlease
 import feedparser
 
-# --- 6. MODERN REAL-TIME NEWS SECTION ---
+# --- 6. CLEAN & FAST NEWS LINKS ---
 st.divider()
-st.subheader("📰 Live Industry Updates (Actual Photos)")
+st.subheader("📰 Latest Rubber Industry News")
 
-def get_real_news():
-    # Searching Google News for GREL and Rubber prices
+def get_news_links():
+    # Searching Google News specifically for GREL and Ghana Rubber
     rss_url = "https://news.google.com/rss/search?q=GREL+Ghana+Rubber+Price&hl=en-GH&gl=GH&ceid=GH:en"
     feed = feedparser.parse(rss_url)
-    return feed.entries[:3]
+    return feed.entries[:5]  # Showing 5 links now since they take up less space
 
-news_items = get_real_news()
+news_items = get_news_links()
 
-for entry in news_items:
-    try:
-        # 'news-please' visits the link and pulls the ACTUAL image
-        article = NewsPlease.from_url(entry.link)
+if news_items:
+    for entry in news_items:
+        # Clean the title (removes the source name from the end)
+        display_title = entry.title.split(" - ")[0]
         
-        with st.container():
-            col_img, col_txt = st.columns([1, 2])
-            
-            with col_img:
-                if article.image_url:
-                    st.image(article.image_url, use_container_width=True)
-                else:
-                    # Professional fallback if the site blocks images
-                    st.info("📷 Image available in full article")
-            
-            with col_txt:
-                # Clean the title and show the headline
-                clean_title = entry.title.split(" - ")[0]
-                st.markdown(f"### {clean_title}")
-                st.caption(f"Source: {entry.source.title} | {entry.published}")
-                st.link_button("Read Full Story", entry.link)
-        
-        st.markdown("---")
-    except Exception as e:
-        # Fallback to simple link if the site is extra-protected
-        st.markdown(f"🔗 **[{entry.title}]({entry.link})**")
+        # Display as a clean list with a clickable link
+        st.markdown(f"🔗 **[{display_title}]({entry.link})**")
+        st.caption(f"Source: {entry.source.title} | Published: {entry.published}")
+        st.write("") # Adds a tiny bit of breathing room
+else:
+    st.write("No new rubber industry updates found today.")
+
+st.info("💡 **Tip:** Click any headline above to read the full report on the web.")
