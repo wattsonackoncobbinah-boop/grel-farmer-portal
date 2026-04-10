@@ -35,7 +35,9 @@ st.markdown(
 
 # --- 3. SIDEBAR ---
 with st.sidebar:
-    st.image("https://www.grelghana.com/images/logo.png") 
+    # Change "logo.png" to the EXACT name of your file on GitHub
+    st.image("logo.png", use_container_width=True) 
+    
     st.header("App Settings")
     st.write("Welcome, Farmer! Check the latest rubber rates below.")
     st.info("Updates every 15 minutes.")
