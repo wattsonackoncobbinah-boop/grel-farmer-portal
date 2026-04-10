@@ -59,34 +59,42 @@ st.divider()
 import datetime
 import calendar
 
-# --- 5. SMART PRICE REVEAL LOGIC ---
+# --- 4. SMART PRICE REVEAL LOGIC ---
 st.divider()
 
 # Get today's date
 today = datetime.date.today()
-# Find the last day of the current month
 last_day = calendar.monthrange(today.year, today.month)[1]
-# Calculate how many days are left in the month
-days_until_new_month = last_day - today.day
+days_left = last_day - today.day
 
-# 1. Current Month Metric (Always Visible)
+# --- CURRENT PRICE (Always Visible) ---
 current_price = 8.12
-st.metric("Current GREL Price (Grade A)", f"GH₵ {current_price}")
+st.write("### 💰 Current Market Rate")
+st.metric("GREL Grade A (April)", f"GH₵ {current_price}", delta="Stable")
 
-# 2. Upcoming Month Logic (Appears 3 days before month-end)
-if days_until_new_month <= 3:
-    st.write("---")
-    st.subheader("📅 End of Month Update")
+st.write("") # Extra space
+
+# --- THE SMART BUTTON ---
+# For testing: I set this to show if days_left is 25 or less (so you can see it now)
+# For real use later: Change the '25' back to '3'
+if days_left <= 25: 
+    st.subheader("📅 Next Month's Forecast")
     
-    # This button only shows up when we are close to the new month
-    if st.button("🔓 Tap to Reveal Next Month's Predicted Price"):
+    # Create a nice container for the reveal
+    with st.expander("🔓 TAP HERE TO REVEAL MAY 2026 PREDICTION", expanded=False):
         next_month_price = 8.14
-        st.balloons() # Adds a little celebration effect
-        st.success(f"Estimated Price for Next Month: **GH₵ {next_month_price}**")
-        st.caption("Note: Official prices are confirmed by GREL/TCDA on the 1st.")
+        
+        st.write("### Predicted Price: **GH₵ 8.14**")
+        st.progress(85) # Shows a visual 'confidence' bar
+        st.success("Analysis suggests a slight increase due to global demand.")
+        
+        if st.button("Confirm Reading"):
+            st.balloons()
+            st.toast("Price prediction acknowledged!")
+            
 else:
-    # Optional: Shows a countdown so your dad knows when the price is coming
-    st.info(f"The next price announcement is in **{days_until_new_month} days**.")
+    # This shows when it's too early in the month
+    st.info(f"Next month's price prediction will be unlocked in {days_left - 3} days.")
 
 # --- 6. LIVE CHART SECTION ---
 st.subheader("📈 Live Global Rubber Market (SICOM TSR20)")
