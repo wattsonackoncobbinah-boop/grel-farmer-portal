@@ -1,4 +1,5 @@
 streamlit
 requests
+lxml_html_clean
 feedparser
 newspaper3k
