@@ -1,6 +1,23 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
+import streamlit as st
+
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                    url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # --- 1. DATA & SETUP ---
 # (Using our established benchmarks for April 10, 2026)
 current_price = 8.12
