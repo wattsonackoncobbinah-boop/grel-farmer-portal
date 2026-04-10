@@ -1,15 +1,13 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-import streamlit as st
-
 st.markdown(
     """
     <style>
     .stApp {
         background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
                     url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80");
-        background-size: cover;
+        url("dad.jpg");
         background-position: center;
         background-attachment: fixed;
     }
@@ -33,6 +31,7 @@ st.set_page_config(page_title="Farmer Price & News Portal", layout="wide")
 
 # --- 2. HEADER ---
 st.title("🚜 BENJI GREL FARMER's PRICE & NEWS PORTAL")
+st.image("dad.jpg", width=250)
 col1, col2, col3 = st.columns(3)
 col1.metric("Rubber Price (Global)", "$1.62", "+0.04")
 col2.metric("Market Status", "🟢 OPEN")
