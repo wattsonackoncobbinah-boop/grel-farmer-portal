@@ -1,20 +1,28 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import streamlit as st
 
 st.markdown(
     """
     <style>
     .stApp {
-        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                    url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80");
-        url("dad.jpg");
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                    url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
+        background-size: cover;
         background-position: center;
         background-attachment: fixed;
+    }
+    h1, h2, h3, p, span, label {
+        color: white !important;
+        text-shadow: 2px 2px 4px #000000;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
+
+# Your title and the rest of your code should come AFTER this
+st.title("📊 GREL Rubber Market Intelligence Portal")
 
 # --- 1. DATA & SETUP ---
 # (Using our established benchmarks for April 10, 2026)
