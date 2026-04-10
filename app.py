@@ -1,6 +1,17 @@
 import streamlit as st
 import streamlit.components.v1 as components
-
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80");
+        background-attachment: fixed;
+        background-size: cover;
+    }
+    </style>
+    """,
+    unsafe_allow_stdio=True
+)
 # --- 1. DATA & SETUP ---
 # (Using our established benchmarks for April 10, 2026)
 current_price = 8.12
