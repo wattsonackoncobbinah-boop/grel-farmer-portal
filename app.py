@@ -12,7 +12,7 @@ st.markdown(
         background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
         
-        /* Change 'cover' to a percentage like 150% to zoom in more */
+        /* Change 'cover' to a percentage like 600% to zoom in more */
         background-size: 600%; 
         
         background-position: center top; /* This keeps his face at the top */
