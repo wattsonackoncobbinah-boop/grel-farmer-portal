@@ -18,9 +18,9 @@ if 'initialized' not in st.session_state:
             
             # Simulated loading bar for effect
             for percent_complete in range(100):
-                time.sleep(0.01) # Total load time ~1-2 seconds
+                time.sleep(3) # Total load time ~1-2 seconds
             
-        time.sleep(1) # Final pause for branding
+        time.sleep(3) # Final pause for branding
     
     # Clear the splash screen and mark app as initialized
     placeholder.empty()
