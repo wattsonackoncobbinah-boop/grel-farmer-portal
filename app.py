@@ -1,10 +1,10 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# --- 1. PAGE CONFIG (MUST BE FIRST) ---
+# --- 1. SET PAGE CONFIG (THIS MUST BE THE VERY FIRST STREAMLIT COMMAND) ---
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 
-# --- 2. THE BACKGROUND & TEXT STYLING ---
+# --- 2. BACKGROUND & TEXT STYLING ---
 st.markdown(
     """
     <style>
@@ -15,13 +15,14 @@ st.markdown(
         background-position: center;
         background-attachment: fixed;
     }
+    /* This makes all text bright white and adds a shadow for clarity */
     h1, h2, h3, p, span, label, .stMetric {
         color: white !important;
         text-shadow: 2px 2px 4px #000000;
     }
-    /* This makes the sidebar readable against the dark background */
+    /* Styles the sidebar to be readable */
     [data-testid="stSidebar"] {
-        background-color: rgba(0, 100, 0, 0.8);
+        background-color: rgba(0, 70, 0, 0.9);
     }
     </style>
     """,
@@ -30,24 +31,24 @@ st.markdown(
 
 # --- 3. SIDEBAR ---
 with st.sidebar:
-    # Using the GitHub raw link for the logo ensures it loads every time
     st.image("https://www.grelghana.com/images/logo.png") 
     st.header("App Settings")
     st.write("Welcome, Farmer! Check the latest rubber rates below.")
     st.info("Updates every 15 minutes.")
 
-# --- 4. HEADER & PORTRAIT ---
+# --- 4. HEADER & DAD'S PHOTO ---
 st.title("🚜 BENJI GREL FARMER'S PRICE & NEWS PORTAL")
 
-# This puts your dad's photo and the key metrics side-by-side
-top_col1, top_col2 = st.columns([1, 2])
-with top_col1:
+col_photo, col_metrics = st.columns([1, 2])
+with col_photo:
+    # Make sure 'dad.jpg' is exactly what you named your file on GitHub!
     st.image("dad.jpg", width=250, caption="Portal Administrator")
-with top_col2:
+
+with col_metrics:
     st.write("### Today's Market Summary")
-    colA, colB = st.columns(2)
-    colA.metric("Global Rubber", "$1.62", "+0.04")
-    colB.metric("GREL Grade A", "7.40 GHS", "-0.10")
+    m1, m2 = st.columns(2)
+    m1.metric("Global Rubber", "$1.62", "+0.04")
+    m2.metric("GREL Grade A", "7.40 GHS", "-0.10")
 
 st.divider()
 
@@ -78,23 +79,14 @@ tradingview_html = """
 """
 components.html(tradingview_html, height=450)
 
-# --- 6. PRICE SUMMARY & NEWS ---
+# --- 6. NEWS & UPDATES ---
 st.write(f"Last Market Update: **Friday, April 10, 2026**")
 st.divider()
 
-current_price = 8.12
-next_month_price = 8.14
-
 c1, c2 = st.columns(2)
-with c1:
-    st.metric("This Month's Price", f"GH₵ {current_price}", delta="+0.15")
-with c2:
-    st.metric("Next Month Prediction", f"GH₵ {next_month_price}", delta="+0.02")
+c1.metric("This Month's Price", "GH₵ 8.12", delta="+0.15")
+c2.metric("Next Month Prediction", "GH₵ 8.14", delta="+0.02")
 
 st.subheader("📰 Why is the price changing?")
-st.info("""
-**Analysis:** Supply deficits in Asia and oil price fluctuations are driving the current trend. 
-As shown in the chart, the global resistance level is holding, which is good news for local GREL prices.
-""")
-
-st.markdown("- [Verify April 2026 Prices on TCDA Website](https://tcda.gov.gh/news/)")
+st.info("Supply deficits in Asia and oil price fluctuations are driving the current trend.")
+st.markdown("- [Verify Prices on TCDA Website](https://tcda.gov.gh/news/)")
