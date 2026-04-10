@@ -1,3 +1,4 @@
 streamlit
 requests
 feedparser
+newspaper3k
