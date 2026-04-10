@@ -1,6 +1,33 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import time
 
+# --- 1. SPLASH SCREEN LOGIC ---
+if 'initialized' not in st.session_state:
+    # This screen only shows when the app first opens or is refreshed
+    placeholder = st.empty()
+    with placeholder.container():
+        # Adjust 'logo.png' to your actual filename
+        # We use a large width to make it the center of attention
+        st.markdown("<br><br><br>", unsafe_allow_html=True) # Push logo down
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image("logo.png", width=400)
+            st.write("### Loading GREL Farmer Portal...")
+            st.progress(0)
+            
+            # Simulated loading bar for effect
+            for percent_complete in range(100):
+                time.sleep(0.01) # Total load time ~1-2 seconds
+            
+        time.sleep(4) # Final pause for branding
+    
+    # Clear the splash screen and mark app as initialized
+    placeholder.empty()
+    st.session_state['initialized'] = True
+
+# --- 2. MAIN APP CONTENT STARTS HERE ---
+# (Rest of your code goes below)
 # --- 1. SET PAGE CONFIG (THIS MUST BE THE VERY FIRST STREAMLIT COMMAND) ---
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 
