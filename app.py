@@ -11,8 +11,12 @@ st.markdown(
     .stApp {
         background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
-        background-size: cover;
-        background-position: center;
+        
+        /* Change 'cover' to a percentage like 150% to zoom in more */
+        background-size: 150%; 
+        
+        background-position: center top; /* This keeps his face at the top */
+        background-repeat: no-repeat;
         background-attachment: fixed;
     }
     /* This makes all text bright white and adds a shadow for clarity */
@@ -77,16 +81,31 @@ tradingview_html = """
   </script>
 </div>
 """
-components.html(tradingview_html, height=450)
+components.html(tradingview_html, height=700)
 
-# --- 6. NEWS & UPDATES ---
-st.write(f"Last Market Update: **Friday, April 10, 2026**")
+import feedparser # Add this to your imports at the very top
+
+# --- 6. AUTOMATED NEWS SECTION ---
 st.divider()
+st.subheader("📰 Live Market News (Automated)")
 
-c1, c2 = st.columns(2)
-c1.metric("This Month's Price", "GH₵ 8.12", delta="+0.15")
-c2.metric("Next Month Prediction", "GH₵ 8.14", delta="+0.02")
+def fetch_rubber_news():
+    # This searches Google News for "GREL Ghana Rubber"
+    rss_url = "https://news.google.com/rss/search?q=GREL+Ghana+Rubber&hl=en-GH&gl=GH&ceid=GH:en"
+    feed = feedparser.parse(rss_url)
+    return feed.entries[:3]  # Get the top 3 news stories
 
-st.subheader("📰 Why is the price changing?")
-st.info("Supply deficits in Asia and oil price fluctuations are driving the current trend.")
-st.markdown("- [Verify Prices on TCDA Website](https://tcda.gov.gh/news/)")
+try:
+    news_items = fetch_rubber_news()
+    if news_items:
+        for entry in news_items:
+            # Displays each news headline as a clickable link
+            st.markdown(f"**[{entry.title}]({entry.link})**")
+            st.caption(f"Source: {entry.source.title} | Published: {entry.published}")
+    else:
+        st.write("No new rubber updates found in the last 24 hours.")
+except Exception as e:
+    st.error("Could not fetch news at this moment.")
+
+# Keep your manual TCDA link as a backup
+st.info("Manual Check: [Verify April 2026 Prices on TCDA Website](https://tcda.gov.gh/news/)")
