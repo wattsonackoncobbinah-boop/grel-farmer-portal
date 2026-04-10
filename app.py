@@ -1,7 +1,10 @@
 import streamlit as st
 import streamlit.components.v1 as components
-import streamlit as st
 
+# --- 1. PAGE CONFIG (MUST BE FIRST) ---
+st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
+
+# --- 2. THE BACKGROUND & TEXT STYLING ---
 st.markdown(
     """
     <style>
@@ -12,56 +15,47 @@ st.markdown(
         background-position: center;
         background-attachment: fixed;
     }
-    h1, h2, h3, p, span, label {
+    h1, h2, h3, p, span, label, .stMetric {
         color: white !important;
         text-shadow: 2px 2px 4px #000000;
+    }
+    /* This makes the sidebar readable against the dark background */
+    [data-testid="stSidebar"] {
+        background-color: rgba(0, 100, 0, 0.8);
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Your title and the rest of your code should come AFTER this
-st.title("📊 GREL Rubber Market Intelligence Portal")
-
-# --- 1. DATA & SETUP ---
-# (Using our established benchmarks for April 10, 2026)
-current_price = 8.12
-next_month_price = 8.14
-
-# ADD THESE LINES TO CREATE A SIDEBAR
+# --- 3. SIDEBAR ---
 with st.sidebar:
-    st.image("https://www.grelghana.com/images/logo.png") # Optional: GREL Logo link
+    # Using the GitHub raw link for the logo ensures it loads every time
+    st.image("https://www.grelghana.com/images/logo.png") 
     st.header("App Settings")
     st.write("Welcome, Farmer! Check the latest rubber rates below.")
     st.info("Updates every 15 minutes.")
-st.set_page_config(page_title="Farmer Price & News Portal", layout="wide")
 
-# --- 2. HEADER ---
-st.title("🚜 BENJI GREL FARMER's PRICE & NEWS PORTAL")
-st.image("dad.jpg", width=250)
-col1, col2, col3 = st.columns(3)
-col1.metric("Rubber Price (Global)", "$1.62", "+0.04")
-col2.metric("Market Status", "🟢 OPEN")
-col3.metric("Local GREL Grade A", "7.40 GHS", "-0.10")
+# --- 4. HEADER & PORTRAIT ---
+st.title("🚜 BENJI GREL FARMER'S PRICE & NEWS PORTAL")
 
-st.divider() # This adds a nice clean line below the numbers
-# -------------------------------
-
-# --- Your Chart Code comes after this ---
-st.write("Live Rubber Market Chart:")
-# ... (your components.html code starts here)
-st.write(f"Last Market Update: **Friday, April 10, 2026**")
+# This puts your dad's photo and the key metrics side-by-side
+top_col1, top_col2 = st.columns([1, 2])
+with top_col1:
+    st.image("dad.jpg", width=250, caption="Portal Administrator")
+with top_col2:
+    st.write("### Today's Market Summary")
+    colA, colB = st.columns(2)
+    colA.metric("Global Rubber", "$1.62", "+0.04")
+    colB.metric("GREL Grade A", "7.40 GHS", "-0.10")
 
 st.divider()
 
-# --- 3. LIVE CHART SECTION (The New Addition) ---
+# --- 5. LIVE CHART SECTION ---
 st.subheader("📈 Live Global Rubber Market (SICOM TSR20)")
-st.write("This chart shows how the world price is moving in Singapore right now.")
 
-# TradingView Widget HTML code
 tradingview_html = """
-<div class="tradingview-widget-container" style="height:600px;width:100%;">
+<div class="tradingview-widget-container" style="height:450px;width:100%;">
   <div id="tradingview_rubber"></div>
   <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
   <script type="text/javascript">
@@ -82,23 +76,25 @@ tradingview_html = """
   </script>
 </div>
 """
-
-# Render the chart in Streamlit
 components.html(tradingview_html, height=450)
 
-# --- 4. PRICE SUMMARY & NEWS ---
+# --- 6. PRICE SUMMARY & NEWS ---
+st.write(f"Last Market Update: **Friday, April 10, 2026**")
 st.divider()
-col1, col2 = st.columns(2)
-with col1:
+
+current_price = 8.12
+next_month_price = 8.14
+
+c1, c2 = st.columns(2)
+with c1:
     st.metric("This Month's Price", f"GH₵ {current_price}", delta="+0.15")
-with col2:
+with c2:
     st.metric("Next Month Prediction", f"GH₵ {next_month_price}", delta="+0.02")
 
-# News & Reasoning
 st.subheader("📰 Why is the price changing?")
 st.info("""
-**Today's Reasoning:** The chart above shows a steady climb. This is due to the **supply deficit** in Asia and the high cost of oil. As long as that blue line on the chart stays high, 
-your payout in Ghana will remain strong.
+**Analysis:** Supply deficits in Asia and oil price fluctuations are driving the current trend. 
+As shown in the chart, the global resistance level is holding, which is good news for local GREL prices.
 """)
 
 st.markdown("- [Verify April 2026 Prices on TCDA Website](https://tcda.gov.gh/news/)")
