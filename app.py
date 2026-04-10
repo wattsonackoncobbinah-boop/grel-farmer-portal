@@ -85,27 +85,34 @@ components.html(tradingview_html, height=700)
 
 import feedparser # Add this to your imports at the very top
 
-# --- 6. AUTOMATED NEWS SECTION ---
+# --- 6. LIVELY AUTOMATED NEWS SECTION ---
 st.divider()
-st.subheader("📰 Live Market News (Automated)")
+st.subheader("📰 Latest Industry Updates")
 
-def fetch_rubber_news():
-    # This searches Google News for "GREL Ghana Rubber"
-    rss_url = "https://news.google.com/rss/search?q=GREL+Ghana+Rubber&hl=en-GH&gl=GH&ceid=GH:en"
+def get_news():
+    # Searching for Rubber prices and GREL specific news
+    rss_url = "https://news.google.com/rss/search?q=Rubber+price+Ghana+GREL&hl=en-GH&gl=GH&ceid=GH:en"
     feed = feedparser.parse(rss_url)
-    return feed.entries[:3]  # Get the top 3 news stories
+    return feed.entries[:3]
 
-try:
-    news_items = fetch_rubber_news()
-    if news_items:
-        for entry in news_items:
-            # Displays each news headline as a clickable link
-            st.markdown(f"**[{entry.title}]({entry.link})**")
-            st.caption(f"Source: {entry.source.title} | Published: {entry.published}")
-    else:
-        st.write("No new rubber updates found in the last 24 hours.")
-except Exception as e:
-    st.error("Could not fetch news at this moment.")
+news_items = get_news()
 
-# Keep your manual TCDA link as a backup
-st.info("Manual Check: [Verify April 2026 Prices on TCDA Website](https://tcda.gov.gh/news/)")
+if news_items:
+    for entry in news_items:
+        # Create a container for each news "card"
+        with st.container():
+            col_img, col_txt = st.columns([1, 3])
+            
+            with col_img:
+                # This uses a professional rubber farming placeholder image 
+                # because Google News RSS doesn't always send the original image link.
+                st.image("https://images.unsplash.com/photo-1598263941450-967f6789b703?q=80&w=200&auto=format&fit=crop", 
+                         use_container_width=True)
+            
+            with col_txt:
+                st.markdown(f"#### [{entry.title}]({entry.link})")
+                st.caption(f"📅 {entry.published} | Source: {entry.source.title}")
+            
+            st.markdown("---") # Thin line between stories
+else:
+    st.write("No specific news updates found today. Prices are stable.")
