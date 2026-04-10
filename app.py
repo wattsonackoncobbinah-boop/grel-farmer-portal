@@ -20,7 +20,7 @@ if 'initialized' not in st.session_state:
             for percent_complete in range(100):
                 time.sleep(0.01) # Total load time ~1-2 seconds
             
-        time.sleep(4) # Final pause for branding
+        time.sleep(1) # Final pause for branding
     
     # Clear the splash screen and mark app as initialized
     placeholder.empty()
