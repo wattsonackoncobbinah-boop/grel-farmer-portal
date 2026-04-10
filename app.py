@@ -13,7 +13,7 @@ st.markdown(
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
         
         /* Change 'cover' to a percentage like 150% to zoom in more */
-        background-size: 150%; 
+        background-size: 600%; 
         
         background-position: center top; /* This keeps his face at the top */
         background-repeat: no-repeat;
