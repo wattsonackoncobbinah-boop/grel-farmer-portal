@@ -85,14 +85,15 @@ components.html(tradingview_html, height=700)
 
 import feedparser # Add this to your imports at the very top
 
-from newspaper import Article # Add this to your imports at the top
+from newsplease import NewsPlease
 import feedparser
 
-# --- 6. REAL-TIME NEWS SCRAPER ---
+# --- 6. MODERN REAL-TIME NEWS SECTION ---
 st.divider()
-st.subheader("📰 Live Industry Updates (Real Photos)")
+st.subheader("📰 Live Industry Updates (Actual Photos)")
 
 def get_real_news():
+    # Searching Google News for GREL and Rubber prices
     rss_url = "https://news.google.com/rss/search?q=GREL+Ghana+Rubber+Price&hl=en-GH&gl=GH&ceid=GH:en"
     feed = feedparser.parse(rss_url)
     return feed.entries[:3]
@@ -101,27 +102,27 @@ news_items = get_real_news()
 
 for entry in news_items:
     try:
-        # This part 'visits' the article to find the real photo
-        article = Article(entry.link)
-        article.download()
-        article.parse()
-        top_image = article.top_image # This is the ACTUAL photo from the site
+        # 'news-please' visits the link and pulls the ACTUAL image
+        article = NewsPlease.from_url(entry.link)
         
         with st.container():
             col_img, col_txt = st.columns([1, 2])
+            
             with col_img:
-                if top_image:
-                    st.image(top_image, use_container_width=True)
+                if article.image_url:
+                    st.image(article.image_url, use_container_width=True)
                 else:
-                    # Fallback only if the news site blocks scrapers
-                    st.write("📷 No image preview")
+                    # Professional fallback if the site blocks images
+                    st.info("📷 Image available in full article")
             
             with col_txt:
+                # Clean the title and show the headline
                 clean_title = entry.title.split(" - ")[0]
                 st.markdown(f"### {clean_title}")
-                st.caption(f"Source: {entry.source.title}")
+                st.caption(f"Source: {entry.source.title} | {entry.published}")
                 st.link_button("Read Full Story", entry.link)
+        
         st.markdown("---")
-    except:
-        # If a specific site blocks us, just show the headline
-        st.markdown(f"**[{entry.title}]({entry.link})**")
+    except Exception as e:
+        # Fallback to simple link if the site is extra-protected
+        st.markdown(f"🔗 **[{entry.title}]({entry.link})**")
