@@ -85,42 +85,43 @@ components.html(tradingview_html, height=700)
 
 import feedparser # Add this to your imports at the very top
 
-# --- 6. UPGRADED LIVELY NEWS SECTION ---
-st.divider()
-st.subheader("📰 Latest Industry Updates")
+from newspaper import Article # Add this to your imports at the top
+import feedparser
 
-def get_news():
-    rss_url = "https://news.google.com/rss/search?q=Rubber+price+Ghana+GREL&hl=en-GH&gl=GH&ceid=GH:en"
+# --- 6. REAL-TIME NEWS SCRAPER ---
+st.divider()
+st.subheader("📰 Live Industry Updates (Real Photos)")
+
+def get_real_news():
+    rss_url = "https://news.google.com/rss/search?q=GREL+Ghana+Rubber+Price&hl=en-GH&gl=GH&ceid=GH:en"
     feed = feedparser.parse(rss_url)
     return feed.entries[:3]
 
-news_items = get_news()
+news_items = get_real_news()
 
-# A list of professional industry images to rotate if the feed is empty
-backup_images = [
-    "https://images.unsplash.com/photo-1598263941450-967f6789b703?q=80&w=400&auto=format&fit=crop", # Rubber tree
-    "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=400&auto=format&fit=crop", # Agriculture
-    "https://images.unsplash.com/photo-1530507629858-e4977d30e9e0?q=80&w=400&auto=format&fit=crop"  # Factory/Logistics
-]
-
-if news_items:
-    for i, entry in enumerate(news_items):
+for entry in news_items:
+    try:
+        # This part 'visits' the article to find the real photo
+        article = Article(entry.link)
+        article.download()
+        article.parse()
+        top_image = article.top_image # This is the ACTUAL photo from the site
+        
         with st.container():
-            # Creating a clean card layout
             col_img, col_txt = st.columns([1, 2])
-            
             with col_img:
-                # We use different images for different news stories to make it lively
-                img_url = backup_images[i % len(backup_images)]
-                st.image(img_url, use_container_width=True)
+                if top_image:
+                    st.image(top_image, use_container_width=True)
+                else:
+                    # Fallback only if the news site blocks scrapers
+                    st.write("📷 No image preview")
             
             with col_txt:
-                # Cleaning up the title (removing the source name from the end)
                 clean_title = entry.title.split(" - ")[0]
                 st.markdown(f"### {clean_title}")
-                st.caption(f"📅 {entry.published} | {entry.source.title}")
-                st.link_button("Read Full Article", entry.link)
-            
-            st.markdown("<br>", unsafe_allow_html=True) # Space between cards
-else:
-    st.info("No new articles found. The rubber market is currently stable.")
+                st.caption(f"Source: {entry.source.title}")
+                st.link_button("Read Full Story", entry.link)
+        st.markdown("---")
+    except:
+        # If a specific site blocks us, just show the headline
+        st.markdown(f"**[{entry.title}]({entry.link})**")
