@@ -1,6 +1,13 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import time
+import os
+# Get the directory where app.py is located
+current_dir = os.path.dirname(__file__)
+logo_path = os.path.join(current_dir, "logo.png")
+
+# Then, in your splash screen code, use:
+st.image(logo_path, width=400)
 
 # --- 1. SPLASH SCREEN LOGIC ---
 if 'initialized' not in st.session_state:
