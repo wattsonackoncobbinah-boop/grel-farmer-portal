@@ -6,10 +6,27 @@ import streamlit.components.v1 as components
 current_price = 8.12
 next_month_price = 8.14
 
+# ADD THESE LINES TO CREATE A SIDEBAR
+with st.sidebar:
+    st.image("https://www.grelghana.com/images/logo.png") # Optional: GREL Logo link
+    st.header("App Settings")
+    st.write("Welcome, Farmer! Check the latest rubber rates below.")
+    st.info("Updates every 15 minutes.")
 st.set_page_config(page_title="Farmer Price & News Portal", layout="wide")
 
 # --- 2. HEADER ---
-st.title("🚜 BENJI GREL FARMER PRICE & NEWS PORTAL")
+st.title("🚜 BENJI GREL FARMER's PRICE & NEWS PORTAL")
+col1, col2, col3 = st.columns(3)
+col1.metric("Rubber Price (Global)", "$1.62", "+0.04")
+col2.metric("Market Status", "🟢 OPEN")
+col3.metric("Local GREL Grade A", "7.40 GHS", "-0.10")
+
+st.divider() # This adds a nice clean line below the numbers
+# -------------------------------
+
+# --- Your Chart Code comes after this ---
+st.write("Live Rubber Market Chart:")
+# ... (your components.html code starts here)
 st.write(f"Last Market Update: **Friday, April 10, 2026**")
 
 st.divider()
@@ -20,7 +37,7 @@ st.write("This chart shows how the world price is moving in Singapore right now.
 
 # TradingView Widget HTML code
 tradingview_html = """
-<div class="tradingview-widget-container" style="height:400px;width:300%;">
+<div class="tradingview-widget-container" style="height:600px;width:100%;">
   <div id="tradingview_rubber"></div>
   <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
   <script type="text/javascript">
@@ -29,10 +46,10 @@ tradingview_html = """
     "symbol": "SGX:TF1!",
     "interval": "D",
     "timezone": "Etc/UTC",
-    "theme": "green",
+    "theme": "dark",
     "style": "2",
     "locale": "en",
-    "toolbar_bg": "#228B22",
+    "toolbar_bg": "#006400",
     "enable_publishing": false,
     "hide_top_toolbar": true,
     "save_image": false,
