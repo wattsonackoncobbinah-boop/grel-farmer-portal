@@ -46,7 +46,7 @@ st.title("🚜 BENJI GREL FARMER'S PRICE & NEWS PORTAL")
 col_photo, col_metrics = st.columns([1, 2])
 with col_photo:
     # Make sure 'dad.jpg' is exactly what you named your file on GitHub!
-    st.image("dad.jpg", width=250, caption="Portal Administrator")
+    st.image("dad.jpg", width=600, caption="Portal Administrator")
 
 with col_metrics:
     st.write("### Today's Market Summary")
@@ -60,7 +60,7 @@ st.divider()
 st.subheader("📈 Live Global Rubber Market (SICOM TSR20)")
 
 tradingview_html = """
-<div class="tradingview-widget-container" style="height:450px;width:100%;">
+<div class="tradingview-widget-container" style="height:700px;width:100%;">
   <div id="tradingview_rubber"></div>
   <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
   <script type="text/javascript">
