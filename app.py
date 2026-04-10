@@ -9,7 +9,7 @@ next_month_price = 8.14
 st.set_page_config(page_title="Farmer Price & News Portal", layout="wide")
 
 # --- 2. HEADER ---
-st.title("🚜 GREL Farmer Price & News Portal")
+st.title("🚜 BENJI GREL FARMER PRICE & NEWS PORTAL")
 st.write(f"Last Market Update: **Friday, April 10, 2026**")
 
 st.divider()
@@ -20,7 +20,7 @@ st.write("This chart shows how the world price is moving in Singapore right now.
 
 # TradingView Widget HTML code
 tradingview_html = """
-<div class="tradingview-widget-container" style="height:400px;width:100%;">
+<div class="tradingview-widget-container" style="height:400px;width:300%;">
   <div id="tradingview_rubber"></div>
   <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
   <script type="text/javascript">
@@ -29,10 +29,10 @@ tradingview_html = """
     "symbol": "SGX:TF1!",
     "interval": "D",
     "timezone": "Etc/UTC",
-    "theme": "light",
+    "theme": "green",
     "style": "2",
     "locale": "en",
-    "toolbar_bg": "#f1f3f6",
+    "toolbar_bg": "#228B22",
     "enable_publishing": false,
     "hide_top_toolbar": true,
     "save_image": false,
