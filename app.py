@@ -85,34 +85,42 @@ components.html(tradingview_html, height=700)
 
 import feedparser # Add this to your imports at the very top
 
-# --- 6. LIVELY AUTOMATED NEWS SECTION ---
+# --- 6. UPGRADED LIVELY NEWS SECTION ---
 st.divider()
 st.subheader("📰 Latest Industry Updates")
 
 def get_news():
-    # Searching for Rubber prices and GREL specific news
     rss_url = "https://news.google.com/rss/search?q=Rubber+price+Ghana+GREL&hl=en-GH&gl=GH&ceid=GH:en"
     feed = feedparser.parse(rss_url)
     return feed.entries[:3]
 
 news_items = get_news()
 
+# A list of professional industry images to rotate if the feed is empty
+backup_images = [
+    "https://images.unsplash.com/photo-1598263941450-967f6789b703?q=80&w=400&auto=format&fit=crop", # Rubber tree
+    "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=400&auto=format&fit=crop", # Agriculture
+    "https://images.unsplash.com/photo-1530507629858-e4977d30e9e0?q=80&w=400&auto=format&fit=crop"  # Factory/Logistics
+]
+
 if news_items:
-    for entry in news_items:
-        # Create a container for each news "card"
+    for i, entry in enumerate(news_items):
         with st.container():
-            col_img, col_txt = st.columns([1, 3])
+            # Creating a clean card layout
+            col_img, col_txt = st.columns([1, 2])
             
             with col_img:
-                # This uses a professional rubber farming placeholder image 
-                # because Google News RSS doesn't always send the original image link.
-                st.image("https://images.unsplash.com/photo-1598263941450-967f6789b703?q=80&w=200&auto=format&fit=crop", 
-                         use_container_width=True)
+                # We use different images for different news stories to make it lively
+                img_url = backup_images[i % len(backup_images)]
+                st.image(img_url, use_container_width=True)
             
             with col_txt:
-                st.markdown(f"#### [{entry.title}]({entry.link})")
-                st.caption(f"📅 {entry.published} | Source: {entry.source.title}")
+                # Cleaning up the title (removing the source name from the end)
+                clean_title = entry.title.split(" - ")[0]
+                st.markdown(f"### {clean_title}")
+                st.caption(f"📅 {entry.published} | {entry.source.title}")
+                st.link_button("Read Full Article", entry.link)
             
-            st.markdown("---") # Thin line between stories
+            st.markdown("<br>", unsafe_allow_html=True) # Space between cards
 else:
-    st.write("No specific news updates found today. Prices are stable.")
+    st.info("No new articles found. The rubber market is currently stable.")
