@@ -87,7 +87,7 @@ import feedparser # Add this to your imports at the very top
 
 import feedparser
 
-# --- 6. CLEAN & FAST NEWS LINKS ---
+# --- 6. BOLD & READABLE NEWS LINKS ---
 st.divider()
 st.subheader("📰 Latest Rubber Industry News")
 
@@ -95,20 +95,23 @@ def get_news_links():
     # Searching Google News specifically for GREL and Ghana Rubber
     rss_url = "https://news.google.com/rss/search?q=GREL+Ghana+Rubber+Price&hl=en-GH&gl=GH&ceid=GH:en"
     feed = feedparser.parse(rss_url)
-    return feed.entries[:5]  # Showing 5 links now since they take up less space
+    return feed.entries[:5]
 
 news_items = get_news_links()
 
 if news_items:
     for entry in news_items:
-        # Clean the title (removes the source name from the end)
+        # Clean the title
         display_title = entry.title.split(" - ")[0]
         
-        # Display as a clean list with a clickable link
-        st.markdown(f"🔗 **[{display_title}]({entry.link})**")
-        st.caption(f"Source: {entry.source.title} | Published: {entry.published}")
-        st.write("") # Adds a tiny bit of breathing room
+        # We use '###' to make the link look like a bold header
+        # and [Text](Link) to keep it clickable.
+        st.markdown(f"### 🔗 **[{display_title}]({entry.link})**")
+        
+        # Keeping the source and date smaller so the focus stays on the headline
+        st.caption(f"**Source:** {entry.source.title} | **Published:** {entry.published}")
+        st.markdown("---") # Adds a clean separator line
 else:
     st.write("No new rubber industry updates found today.")
 
-st.info("💡 **Tip:** Click any headline above to read the full report on the web.")
+st.info("💡 **Tip:** Tap any bold headline above to read the full report.")
