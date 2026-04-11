@@ -1,6 +1,3 @@
-import streamlit as st
-import streamlit.components.v1 as components
-import time
 
 # --- 1. SPLASH SCREEN LOGIC ---
 if 'initialized' not in st.session_state:
@@ -75,6 +72,14 @@ with col_metrics:
     m2.metric("GREL Grade A", "7.40 GHS", "-0.10")
 
 st.divider()
+# --- 3. SIDEBAR ---
+with st.sidebar:
+    # Change "logo.png" to the EXACT name of your file on GitHub
+    st.image("logo.png", use_container_width=True) 
+    
+    st.header("App Settings")
+    st.write("Welcome, Farmer! Check the latest rubber rates below.")
+    st.info("Updates every 15 minutes.")
 
 import datetime
 import calendar
