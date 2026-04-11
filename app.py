@@ -3,33 +3,44 @@ import streamlit.components.v1 as components
 import time
 import datetime
 import calendar
-import feedparser
+import feedparser # All imports at the top
 
-# --- 1. SET PAGE CONFIG (MUST BE AT THE TOP) ---
+# 1. MUST BE FIRST
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 
-# --- 2. SPLASH SCREEN LOGIC ---
+# 2. INITIALIZATION
 if 'initialized' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
-        st.markdown("<br><br><br>", unsafe_allow_html=True) 
+        st.markdown("<br><br><br>", unsafe_allow_html=True)
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            # Check if logo.png exists to prevent errors
             st.image("logo.png", width=400)
             st.write("### Loading GREL Farmer Portal...")
-            progress_bar = st.progress(0)
-            
-            for percent_complete in range(100):
-                time.sleep(0.02) # Faster for testing (3s was a bit long per loop!)
-                progress_bar.progress(percent_complete + 1)
-            
-        time.sleep(1) 
-    
+            bar = st.progress(0)
+            for i in range(100):
+                time.sleep(0.02) # Total ~2 seconds
+                bar.progress(i + 1)
     placeholder.empty()
     st.session_state['initialized'] = True
 
-# --- 3. BACKGROUND & TEXT STYLING ---
+# 3. STYLING
+st.markdown("""
+    <style>
+    .stApp {
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                    url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+    }
+    h1, h2, h3, p, span, label, [data-testid="stMetricValue"] {
+        color: white !important;
+        text-shadow: 2px 2px 4px #000000;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# --- 4. BACKGROUND & TEXT STYLING ---
 # Using f-strings to ensure URLs are handled correctly
 st.markdown(
     """
@@ -57,7 +68,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# --- 4. HEADER & DAD'S PHOTO ---
+# --- 5. HEADER & DAD'S PHOTO ---
 st.title("🚜 BENJI GREL FARMER'S PRICE & NEWS PORTAL")
 
 col_photo, col_metrics = st.columns([1, 2])
@@ -81,10 +92,7 @@ with st.sidebar:
     st.write("Welcome, Farmer! Check the latest rubber rates below.")
     st.info("Updates every 15 minutes.")
 
-import datetime
-import calendar
-
-# --- 4. SMART PRICE REVEAL LOGIC ---
+# --- 6. SMART PRICE REVEAL LOGIC ---
 st.divider()
 
 # Get today's date
@@ -121,7 +129,7 @@ else:
     # This shows when it's too early in the month
     st.info(f"Next month's price prediction will be unlocked in {days_left - 3} days.")
 
-# --- 5. LIVE CHART SECTION ---
+# --- 7. LIVE CHART SECTION ---
 st.subheader("📈 Live Global Rubber Market (SICOM TSR20)")
 
 tradingview_html = """
@@ -148,11 +156,7 @@ tradingview_html = """
 """
 components.html(tradingview_html, height=700)
 
-import feedparser # Add this to your imports at the very top
-
-import feedparser
-
-# --- 6. BOLD & READABLE NEWS LINKS ---
+# --- 8. BOLD & READABLE NEWS LINKS ---
 st.divider()
 st.subheader("📰 Latest Rubber Industry News")
 
