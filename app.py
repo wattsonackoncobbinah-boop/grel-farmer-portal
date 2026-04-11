@@ -1,54 +1,54 @@
+import streamlit as st
+import streamlit.components.v1 as components
+import time
+import datetime
+import calendar
+import feedparser
 
-# --- 1. SPLASH SCREEN LOGIC ---
+# --- 1. SET PAGE CONFIG (MUST BE AT THE TOP) ---
+st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
+
+# --- 2. SPLASH SCREEN LOGIC ---
 if 'initialized' not in st.session_state:
-    # This screen only shows when the app first opens or is refreshed
     placeholder = st.empty()
     with placeholder.container():
-        # Adjust 'logo.png' to your actual filename
-        # We use a large width to make it the center of attention
-        st.markdown("<br><br><br>", unsafe_allow_html=True) # Push logo down
+        st.markdown("<br><br><br>", unsafe_allow_html=True) 
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
+            # Check if logo.png exists to prevent errors
             st.image("logo.png", width=400)
             st.write("### Loading GREL Farmer Portal...")
-            st.progress(0)
+            progress_bar = st.progress(0)
             
-            # Simulated loading bar for effect
             for percent_complete in range(100):
-                time.sleep(3) # Total load time ~1-2 seconds
+                time.sleep(0.02) # Faster for testing (3s was a bit long per loop!)
+                progress_bar.progress(percent_complete + 1)
             
-        time.sleep(3) # Final pause for branding
+        time.sleep(1) 
     
-    # Clear the splash screen and mark app as initialized
     placeholder.empty()
     st.session_state['initialized'] = True
 
-# --- 2. MAIN APP CONTENT STARTS HERE ---
-# (Rest of your code goes below)
-# --- 1. SET PAGE CONFIG (THIS MUST BE THE VERY FIRST STREAMLIT COMMAND) ---
-st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
-
-# --- 2. BACKGROUND & TEXT STYLING ---
+# --- 3. BACKGROUND & TEXT STYLING ---
+# Using f-strings to ensure URLs are handled correctly
 st.markdown(
     """
     <style>
     .stApp {
         background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
-        
-        /* Change 'cover' to a percentage like 600% to zoom in more */
-        background-size: 600%; 
-        
-        background-position: center top; /* This keeps his face at the top */
+        background-size: cover; 
+        background-position: center top;
         background-repeat: no-repeat;
         background-attachment: fixed;
     }
-    /* This makes all text bright white and adds a shadow for clarity */
-    h1, h2, h3, p, span, label, .stMetric {
+    
+    /* Force white text on common Streamlit elements */
+    h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {
         color: white !important;
         text-shadow: 2px 2px 4px #000000;
     }
-    /* Styles the sidebar to be readable */
+
     [data-testid="stSidebar"] {
         background-color: rgba(0, 70, 0, 0.9);
     }
@@ -121,7 +121,7 @@ else:
     # This shows when it's too early in the month
     st.info(f"Next month's price prediction will be unlocked in {days_left - 3} days.")
 
-# --- 6. LIVE CHART SECTION ---
+# --- 5. LIVE CHART SECTION ---
 st.subheader("📈 Live Global Rubber Market (SICOM TSR20)")
 
 tradingview_html = """
