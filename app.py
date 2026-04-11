@@ -8,22 +8,55 @@ import feedparser # All imports at the top
 # 1. MUST BE FIRST
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 
-# 2. INITIALIZATION
+# --- 2. INITIALIZATION & ANIMATED SPLASH SCREEN ---
 if 'initialized' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
+        # CSS for the 'Action' movements
+        st.markdown("""
+            <style>
+            @keyframes pulse-grow {
+                0% { transform: scale(1); opacity: 0.8; }
+                50% { transform: scale(1.1); opacity: 1; }
+                100% { transform: scale(1); opacity: 0.8; }
+            }
+            @keyframes slide-up {
+                0% { transform: translateY(20px); opacity: 0; }
+                100% { transform: translateY(0); opacity: 1; }
+            }
+            .splash-logo {
+                display: block;
+                margin: auto;
+                animation: pulse-grow 2s infinite ease-in-out;
+            }
+            .loading-text {
+                text-align: center;
+                color: white;
+                font-family: 'sans-serif';
+                animation: slide-up 1s ease-out;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+
         st.markdown("<br><br><br>", unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            st.image("logo.png", width=400)
-            st.write("### Loading GREL Farmer Portal...")
-            bar = st.progress(0)
-            for i in range(100):
-                time.sleep(0.02) # Total ~2 seconds
-                bar.progress(i + 1)
+        
+        # Action: Pulsing Logo
+        st.markdown(f'<img src="{LOGO_URL}" class="splash-logo" width="350">', unsafe_allow_html=True)
+        
+        # Action: Sliding Text
+        st.markdown('<h2 class="loading-text">🚀 Loading Farmer Insights...</h2>', unsafe_allow_html=True)
+        
+        # Visual Progress
+        bar = st.progress(0)
+        for i in range(100):
+            time.sleep(0.015)  # Fast, snappy loading
+            bar.progress(i + 1)
+        
+        st.markdown('<p style="text-align: center; color: #00FF00;">✔ Connection Secure</p>', unsafe_allow_html=True)
+        time.sleep(0.6)
+
     placeholder.empty()
     st.session_state['initialized'] = True
-
 # 3. STYLING
 st.markdown("""
     <style>
