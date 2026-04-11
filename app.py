@@ -129,7 +129,7 @@ else:
     # This shows when it's too early in the month
     st.info(f"Next month's price prediction will be unlocked in {days_left - 3} days.")
 
-# --- 7. LIVE CHART SECTION ---
+# --- 7. CHART SECTION ---
 st.subheader("📈 Live Global Rubber Market (SICOM TSR20)")
 
 tradingview_html = """
