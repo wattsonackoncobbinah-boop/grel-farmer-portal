@@ -60,15 +60,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# --- 3. SIDEBAR ---
-with st.sidebar:
-    # Change "logo.png" to the EXACT name of your file on GitHub
-    st.image("logo.png", use_container_width=True) 
-    
-    st.header("App Settings")
-    st.write("Welcome, Farmer! Check the latest rubber rates below.")
-    st.info("Updates every 15 minutes.")
-
 # --- 4. HEADER & DAD'S PHOTO ---
 st.title("🚜 BENJI GREL FARMER'S PRICE & NEWS PORTAL")
 
