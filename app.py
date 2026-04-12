@@ -33,90 +33,72 @@ def scrape_rubber_price(url):
     except:
         return None
 
-# --- 3. INITIALIZATION & SPLASH SCREEN (RESTORED ORIGINAL) ---
-if 'initialized' not in st.session_state:
-    placeholder = st.empty()
-    with placeholder.container():
-        st.markdown("""
-            <style>
-            .stApp { background-color: #F2EDE4 !important; background-image: none !important; }
-            .loading-text-fs {
-                color: #2D2D2D !important;
-                text-align: center; font-family: sans-serif;
-                margin-top: 25px; font-weight: bold;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-        st.write("<br><br><br>", unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            st.image("logo.png", use_container_width=True)
-            st.markdown('<h1 class="loading-text-fs">BENJI LIMITED</h1>', unsafe_allow_html=True)
-        bar = st.progress(0)
-        for i in range(100):
-            time.sleep(0.01)
-            bar.progress(i + 1)
-        time.sleep(0.5)
-    placeholder.empty()
-    st.session_state['initialized'] = True
-
 # --- 1. INITIALIZE COLOR IN SESSION STATE ---
 if 'sidebar_color' not in st.session_state:
-    st.session_state.sidebar_color = "#004600" # Default GREL Green
+    st.session_state.sidebar_color = "#004600" # Initial default green
 
-# --- 2. SIDEBAR & SECURE PROGRAMMER OVERRIDE ---
+# --- 2. PROGRAMMER OVERRIDE & THEME SETTINGS ---
 with st.sidebar:
     st.image(LOGO_URL, use_container_width=True)
     st.header("App Settings")
     
-    # Hidden Programmer Access
     admin_key = st.text_input("🔑 Programmer Key:", type="password")
     
     if admin_key == "yaw2026":
-        st.success("Admin Mode Active")
-        
-        # NEW: Color Settings for the Programmer
-        with st.expander("🎨 Theme Settings"):
-            chosen_color = st.color_picker("Pick Sidebar Color", st.session_state.sidebar_color)
-            if st.button("Update Theme"):
+        with st.expander("🎨 Sidebar Theme"):
+            # The color picker for the sidebar
+            chosen_color = st.color_picker("Choose Sidebar Color", st.session_state.sidebar_color)
+            if st.button("Apply Color"):
                 st.session_state.sidebar_color = chosen_color
                 st.rerun()
-
+        
+        # Manual Override Logic
         use_manual = st.toggle("Enable Manual Override", value=False)
         if use_manual:
             usd_to_ghs = st.number_input("Set FX:", value=14.50)
             current_grel_gate_price = st.number_input("Set GREL Price:", value=8.30)
             tcda_min_price = st.number_input("Set TCDA Floor:", value=9.11)
         else:
-            # Automation logic remains here...
+            # Automation logic calls (get_live_exchange_rate, etc.)
             usd_to_ghs = get_live_exchange_rate()
             tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
             current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
     else:
-        # Default for users
+        # Default Automation for Farmers
         usd_to_ghs = get_live_exchange_rate()
-        tcda_min_price = 9.11
-        current_grel_gate_price = 8.30
+        tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
+        current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
-# --- 3. DYNAMIC STYLING (USES THE CHOSEN COLOR) ---
+# --- 3. THE CSS (STRICT SIDEBAR ISOLATION) ---
 st.markdown(f"""
     <style>
+    /* 1. Main App Background (Always the Image) */
     .stApp {{
         background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
-        background-size: cover; background-attachment: fixed;
+        background-size: cover; 
+        background-attachment: fixed;
     }}
     
-    /* DYNAMIC SIDEBAR COLOR */
+    /* 2. SPECIFIC SIDEBAR OVERRIDE */
     [data-testid="stSidebar"] {{
         background-color: {st.session_state.sidebar_color} !important;
+        background-image: none !important; /* Ensures the main background image doesn't bleed in */
     }}
 
+    /* 3. Text Visibility in Sidebar */
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label {{
+        color: white !important;
+    }}
+
+    /* 4. Main Content Text */
     h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {{
-        color: white !important; text-shadow: 2px 2px 4px #000000;
+        color: white !important; 
+        text-shadow: 2px 2px 4px #000000;
     }}
     </style>
     """, unsafe_allow_html=True)
+
 # --- 5. CALCULATION ENGINE ---
 def predict_grel_price(global_price, exchange_rate):
     k_factor = 0.365 
