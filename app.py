@@ -174,7 +174,7 @@ tradingview_html = """
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>new TradingView.widget({"autosize":true,"symbol":"SGX:TF1!","interval":"D","theme":"dark","container_id":"tv"});</script></div>
 """
-components.html(tradingview_html, height=500)
+components.html(tradingview_html, height=300)
 
 st.divider()
 # News feed feedparser logic here...
