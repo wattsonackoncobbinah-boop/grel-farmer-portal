@@ -69,71 +69,81 @@ with st.sidebar:
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
-# --- 3. THE CSS (STRICT SIDEBAR ISOLATION - FARMER ACCESSIBILITY VERSION) ---
+# --- 3. THE CSS (STRICT SIDEBAR ISOLATION) ---
 
 st.markdown(f"""
+
     <style>
-    /* 1. Main App Background - Switched to Clean White */
+
+    /* 1. Main App Background */
+
     .stApp {{
-        background-color: #FFFFFF !important;
-        background-image: none !important;
+
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+
+                    url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
+
+        background-size: cover; 
+
+        background-attachment: fixed;
+
     }}
+
     
-    /* 2. THE SIDEBAR: Keeping your custom color logic */
+
+    /* 2. THE FIX: Targeting the sidebar and its child containers */
+
     section[data-testid="stSidebar"] {{
+
         background-color: {st.session_state.sidebar_color} !important;
+
     }}
+
+
+
+    /* This removes the transparency/blur effect in newer Streamlit versions */
 
     section[data-testid="stSidebar"] > div {{
+
         background-color: {st.session_state.sidebar_color} !important;
+
         background-image: none !important;
+
     }}
 
-    /* 3. Text Visibility in Sidebar (Stays White for contrast against Green/Dark sidebars) */
+
+
+    /* 3. Text Visibility in Sidebar */
+
     [data-testid="stSidebar"] p, 
+
     [data-testid="stSidebar"] span, 
+
     [data-testid="stSidebar"] label, 
+
     [data-testid="stSidebar"] h1, 
+
     [data-testid="stSidebar"] h2 {{
+
         color: white !important;
-        font-size: 20px !important;
+
     }}
 
-    /* 4. Main Content Text Visibility - DEEP BLACK & EXTRA LARGE */
-    /* This ensures every word is visible on the white background */
-    h1, h2, h3, p, span, label, li, .stMarkdown {{
-        color: #000000 !important;
-        font-size: 24px !important; 
-        font-weight: 600 !important;
-        text-shadow: none !important; /* Removed shadow for clarity on white */
+
+
+    /* 4. Main Content Text Visibility */
+
+    h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {{
+
+        color: white !important; 
+
+        text-shadow: 2px 2px 4px #000000;
+
     }}
 
-    /* Specific Header Sizes for Mobile Readability */
-    h1 {{ font-size: 52px !important; color: #004600 !important; }} 
-    h2 {{ font-size: 38px !important; }}
-    
-    /* 5. Metrics (The Prices) - Massive and Clear */
-    [data-testid="stMetricValue"] {{
-        color: #1E7E34 !important; /* Deep Green for the Price */
-        font-size: 65px !important; 
-        font-weight: 900 !important;
-    }}
-
-    [data-testid="stMetricLabel"] {{
-        color: #000000 !important;
-        font-size: 22px !important;
-    }}
-
-    /* 6. Links (News Headlines) - Standard Blue for trust */
-    a {{
-        color: #0000EE !important;
-        font-size: 22px !important;
-        font-weight: bold !important;
-        text-decoration: underline !important;
-    }}
     </style>
-    """, unsafe_allow_html=True)
 
+    """, unsafe_allow_html=True)
 # --- 5. CALCULATION ENGINE ---
 def predict_grel_price(global_price, exchange_rate):
     k_factor = 0.365 
