@@ -60,21 +60,6 @@ if 'initialized' not in st.session_state:
 
     placeholder.empty()
     st.session_state['initialized'] = True
-# 3. STYLING
-st.markdown("""
-    <style>
-    .stApp {
-        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                    url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
-        background-size: cover;
-        background-attachment: fixed;
-    }
-    h1, h2, h3, p, span, label, [data-testid="stMetricValue"] {
-        color: white !important;
-        text-shadow: 2px 2px 4px #000000;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 # --- 4. BACKGROUND & TEXT STYLING ---
 # Using f-strings to ensure URLs are handled correctly
