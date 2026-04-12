@@ -12,17 +12,26 @@ import base64
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
 
-# --- 2. PREDICTION ENGINE INPUTS & LOGIC ---
-global_market_trend = 1.65  # Current Singapore Commodity Price ($/kg)
-prev_grel_price = 5.45      # The price from the month before
-usd_to_ghs = 13.50          # Current Exchange Rate
+# --- 2. UPDATED PREDICTION ENGINE (ACCURATE TCDA LOGIC) ---
+# Current Market Data as of April 12, 2026
+global_market_trend = 2.02  # Current SICOM TSR20 ($/kg)
+usd_to_ghs = 14.23          # Current BoG Exchange Rate
+prev_grel_price = 8.12      # Previous Month's Price
+tcda_min_price = 9.11       # Official TCDA Minimum Floor for April 2026
 
 def predict_grel_price(global_price, exchange_rate):
-    raw_conversion = global_price * exchange_rate
-    predicted_price = raw_conversion * 0.75  # 0.75 is the 'GREL Factor'
-    return round(predicted_price, 2)
+    """
+    Calculates the Price per DRY kg based on the TCDA formula.
+    k_factor 0.635 is the standard efficiency for Ghanaian cup-lumps.
+    """
+    k_factor = 0.635
+    predicted_dry = global_price * exchange_rate * k_factor
+    
+    # Ensuring the price never falls below the TCDA statutory minimum
+    return max(round(predicted_dry, 2), tcda_min_price)
 
-prediction = predict_grel_price(global_market_trend, usd_to_ghs)
+# Calculations for the Dashboard
+prediction_dry = predict_grel_price(global_market_trend, usd_to_ghs)
 
 # --- 3. ROBUST ANIMATION LOADER ---
 def load_lottieurl(url: str):
@@ -63,7 +72,7 @@ if 'initialized' not in st.session_state:
             st.markdown('<h1 class="loading-text-fs">BENJI LIMITED</h1>', unsafe_allow_html=True)
         bar = st.progress(0)
         for i in range(100):
-            time.sleep(0.09)
+            time.sleep(0.01) # Speed up for testing, set back to 0.09 for production
             bar.progress(i + 1)
         time.sleep(0.5)
     placeholder.empty()
@@ -93,26 +102,30 @@ with col_photo:
 with col_metrics:
     st.write("### Today's Market Summary")
     m1, m2 = st.columns(2)
-    m1.metric("Global Rubber", "$1.62", "+0.04")
-    m2.metric("GREL Grade A", "7.40 GHS", "-0.10")
+    m1.metric("Global SICOM", f"${global_market_trend}", "+0.04")
+    m2.metric("TCDA Floor Price", f"{tcda_min_price} GHS", "Statutory")
 
-# --- 7. PREDICTION DASHBOARD ---
+# --- 7. NEW: WET WEIGHT PAYOUT CALCULATOR ---
 st.divider()
-st.subheader("🔮 Price Forecast (Early Insight)")
-col_pred, col_trend = st.columns(2)
-with col_pred:
-    delta_val = round(prediction - prev_grel_price, 2)
-    st.metric(
-        label="Predicted GREL Price", 
-        value=f"₵{prediction}", 
-        delta=f"{delta_val} from last month"
-    )
-with col_trend:
-    if delta_val > 0:
-        st.success("Trend: 📈 Rising Market")
-    else:
-        st.warning("Trend: 📉 Potential Dip")
-st.info("💡 This prediction is based on global SICOM trends and current forex rates.")
+st.subheader("💰 Farmer's Payout Calculator (Wet Weight)")
+c1, c2, c3 = st.columns(3)
+with c1:
+    wet_kg = st.number_input("Enter Wet Weight (kg):", value=1000, step=100)
+with c2:
+    drc_val = st.slider("Select DRC % (from GREL Lab):", 40, 65, 52)
+with c3:
+    deduct_loan = st.checkbox("Apply 25% Loan Deduction", value=True)
+
+# Calculate specific farmer metrics
+wet_price = round(prediction_dry * (drc_val / 100), 2)
+gross_total = round(wet_kg * wet_price, 2)
+net_total = round(gross_total * 0.75, 2) if deduct_loan else gross_total
+
+st.write("---")
+res1, res2, res3 = st.columns(3)
+res1.metric("Predicted Dry Price", f"₵{prediction_dry}")
+res2.metric("Your Wet Price", f"₵{wet_price}/kg")
+res3.metric("Estimated Take-Home", f"₵{net_total:,}")
 
 # --- 8. SIDEBAR & WEATHER ---
 with st.sidebar:
@@ -137,20 +150,17 @@ today = datetime.date.today()
 last_day = calendar.monthrange(today.year, today.month)[1]
 days_left = last_day - today.day
 
-current_price = 8.12
-st.write("### 💰 Current Market Rate")
-st.metric("GREL Grade A (April)", f"GH₵ {current_price}", delta="Stable")
-
-if days_left <= 25: 
-    st.subheader("📅 Next Month's Forecast")
-    with st.expander("🔓 TAP HERE TO REVEAL MAY 2026 PREDICTION"):
-        st.write(f"### Predicted Price: **GH₵ {prediction}**")
-        st.progress(85)
+st.write("### 📅 Next Month's Forecast")
+# Price Forecast logic (Visible in the last 7 days of the month)
+if days_left <= 7: 
+    with st.expander("🔓 TAP HERE TO REVEAL NEXT MONTH'S PREDICTION"):
+        st.write(f"### Predicted Price: **GH₵ {prediction_dry}**")
+        st.info("Based on current SICOM averages and TCDA formula.")
         if st.button("Confirm Reading"):
             st.balloons()
             st.toast("Price acknowledged!")
 else:
-    st.info(f"Next month's prediction unlocks in {days_left - 3} days.")
+    st.info(f"Predictive data for next month unlocks in {days_left - 6} days.")
 
 # --- 10. CHART & NEWS ---
 st.subheader("📈 Live Global Rubber Market")
@@ -166,7 +176,7 @@ st.subheader("📰 Rubber Industry News Hub")
 col_local, col_int = st.columns(2)
 with col_local:
     st.markdown("### Local Updates")
-    st.info("**April 2026 Price:** TCDA fixed minimum at **GH₵ 9.11/kg**.")
+    st.info(f"**Official Price:** TCDA fixed minimum at **GH₵ {tcda_min_price}/kg**.")
     st.success("**Scholarships:** GREL awarded 33 students for the 2026 year.")
 with col_int:
     st.markdown("### International Feed")
