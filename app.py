@@ -12,25 +12,20 @@ import base64
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
 
-# --- 2. UPDATED PREDICTION ENGINE (OFFICIAL APRIL 2026 DATA) ---
-# Using actual TCDA April 2026 announcement data
-# SICOM Average: $1.7573/kg | BoG FX Rate: 14.2318
-global_market_trend = 1.76  # Rounded SICOM ($/kg)
+# --- 2. UPDATED PREDICTION ENGINE (APRIL 2026 DATA) ---
+global_market_trend = 1.76  # Current SICOM Average ($/kg)
 usd_to_ghs = 14.23          # Current Bank of Ghana Exchange Rate
-prev_grel_price = 8.12      # Reference Price from March
-tcda_floor_price = 9.11     # OFFICIAL TCDA MINIMUM (April 2026)
+current_grel_gate_price = 8.30 # Actual Local Market Price (April 2026)
+tcda_min_price = 9.11       # Official TCDA Minimum Floor (Dry Equivalent)
 
 def predict_grel_price(global_price, exchange_rate):
     """
     Standard TCDA/GREL Formula:
-    k_factor (0.365) is the industry standard for raw cup-lump share.
+    k_factor (0.365) accounts for outgrower overhead.
     """
-    # Based on the TCDA reference, the calculation for cup-lumps 
-    # results in approximately GH₵ 9.11 dry weight.
-    predicted_dry = global_price * exchange_rate * 0.365 # Derived k-factor
-    
-    # Logic: Processors cannot pay less than the TCDA floor
-    return max(round(predicted_dry, 2), tcda_floor_price)
+    k_factor = 0.365
+    predicted_dry = global_price * exchange_rate * k_factor
+    return max(round(predicted_dry, 2), tcda_min_price)
 
 prediction_dry = predict_grel_price(global_market_trend, usd_to_ghs)
 
@@ -104,9 +99,9 @@ with col_metrics:
     st.write("### Today's Market Summary")
     m1, m2 = st.columns(2)
     m1.metric("Global SICOM", f"${global_market_trend}", "+0.04")
-    m2.metric("TCDA Floor Price", f"{tcda_floor_price} GHS", "Statutory")
+    m2.metric("Actual GREL Price", f"GH₵ {current_grel_gate_price}", "-0.10")
 
-# --- 7. FARMER'S PAYOUT CALCULATOR (WET WEIGHT) ---
+# --- 7. PAYOUT CALCULATOR ---
 st.divider()
 st.subheader("💰 Farmer's Payout Calculator (Wet Weight)")
 c1, c2, c3 = st.columns(3)
@@ -117,16 +112,15 @@ with c2:
 with c3:
     deduct_loan = st.checkbox("Apply 25% Loan Deduction", value=True)
 
-# Calculate specific farmer metrics
-# Wet Price is a fraction of the Dry Price based on the DRC test
+# Logic for Calculator
 wet_price = round(prediction_dry * (drc_val / 100), 2)
 gross_total = round(wet_kg * wet_price, 2)
 net_total = round(gross_total * 0.75, 2) if deduct_loan else gross_total
 
 st.write("---")
 res1, res2, res3 = st.columns(3)
-res1.metric("Predicted Dry Price", f"₵{prediction_dry}/kg", help="GREL's quoted price")
-res2.metric("Your Wet Price", f"₵{wet_price}/kg", help="Price per kg of your wet rubber")
+res1.metric("Predicted Dry Price", f"₵{prediction_dry}/kg")
+res2.metric("Your Wet Price", f"₵{wet_price}/kg")
 res3.metric("Estimated Take-Home", f"₵{net_total:,}")
 
 # --- 8. SIDEBAR & WEATHER ---
@@ -146,19 +140,25 @@ with st.sidebar:
         if sun_anim: st_lottie(sun_anim, height=150, key="sun")
         st.success("☀️ **Clear Skies**")
 
-# --- 9. PRICE REVEAL ---
+# --- 9. PRICE REVEAL SECTION ---
 st.divider()
+st.write("### 💰 Confirmed Market Rates")
+col_current, col_floor = st.columns(2)
+with col_current:
+    st.metric("GREL Gate Price (April)", f"GH₵ {current_grel_gate_price}", delta="Current")
+with col_floor:
+    st.metric("TCDA Minimum Floor", f"GH₵ {tcda_min_price}", delta="Statutory")
+
 today = datetime.date.today()
 last_day = calendar.monthrange(today.year, today.month)[1]
 days_left = last_day - today.day
 
-st.write("### 📅 Next Month's Forecast")
 if days_left <= 7: 
+    st.subheader("📅 Next Month's Forecast")
     with st.expander("🔓 TAP HERE TO REVEAL NEXT MONTH'S PREDICTION"):
         st.write(f"### Predicted Price: **GH₵ {prediction_dry}**")
         if st.button("Confirm Reading"):
             st.balloons()
-            st.toast("Price acknowledged!")
 else:
     st.info(f"Predictive data for next month unlocks in {days_left - 6} days.")
 
@@ -176,8 +176,7 @@ st.subheader("📰 Rubber Industry News Hub")
 col_local, col_int = st.columns(2)
 with col_local:
     st.markdown("### Local Updates")
-    st.info(f"**Official Price:** TCDA fixed minimum at **GH₵ {tcda_floor_price}/kg**.")
-    st.success("**Scholarships:** GREL awarded 33 students for the 2026 year.")
+    st.info(f"**GREL News:** TCDA fixed minimum at **GH₵ {tcda_min_price}/kg**.")
 with col_int:
     st.markdown("### International Feed")
     feed = feedparser.parse("https://news.google.com/rss/search?q=rubber+market+Ghana&hl=en-GH&gl=GH&ceid=GH:en")
@@ -185,4 +184,4 @@ with col_int:
         st.markdown(f"**[{entry.title.split(' - ')[0]}]({entry.link})**")
 
 st.divider()
-st.info(f"💡 **Advice:** Use the **GH₵ {tcda_floor_price}** baseline for bargaining.")
+st.info(f"💡 **Advice:** Use the **GH₵ {current_grel_gate_price}** rate for immediate planning.")
