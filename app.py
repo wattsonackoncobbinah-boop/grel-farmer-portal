@@ -178,8 +178,7 @@ components.html(tradingview_html, height=300)
 
 st.divider()
 # News feed feedparser logic here...
-
-# --- 11. NEWS HUB (RESTORED) ---
+# --- 11. NEWS HUB (ALL LINKS) ---
 st.divider()
 st.subheader("📰 Rubber Industry News Hub")
 
@@ -187,31 +186,42 @@ col_local, col_int = st.columns(2)
 
 with col_local:
     st.markdown("### 🇬🇭 Local Updates")
-    st.info(f"**Official Floor:** TCDA fixed minimum at **GH₵ {tcda_min_price}/kg**.")
-    st.success("**Community:** GREL 2026 Scholarship awards are now being processed for qualifying students in the Western Region.")
-    st.warning("**Weather Note:** Check the sidebar rain alerts before planning your washout schedule.")
+    # Clickable TCDA link using the dynamic price
+    st.markdown(f"""
+        <div style="background-color: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; border-left: 5px solid #ff4b4b;">
+            <p style="margin-bottom: 5px;"><strong>TCDA Official Floor Price</strong></p>
+            <a href="https://tcda.gov.gh/" target="_blank" style="color: #ff4b4b; text-decoration: none; font-weight: bold;">
+                Latest Rate: GH₵ {tcda_min_price}/kg → Click to View Official Notice
+            </a>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.write("") # Spacer
+    
+    # Clickable GREL link
+    st.markdown(f"""
+        <div style="background-color: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; border-left: 5px solid #28a745;">
+            <p style="margin-bottom: 5px;"><strong>GREL Corporate News</strong></p>
+            <a href="http://grelghana.com/" target="_blank" style="color: #28a745; text-decoration: none; font-weight: bold;">
+                Check GREL Outgrower Announcements →
+            </a>
+        </div>
+    """, unsafe_allow_html=True)
 
 with col_int:
     st.markdown("### 🌍 International Feed")
     try:
-        # Fetching latest rubber news from Google News RSS
         news_url = "https://news.google.com/rss/search?q=rubber+market+Ghana&hl=en-GH&gl=GH&ceid=GH:en"
         feed = feedparser.parse(news_url)
         
-        # Display the top 3 news stories
         for entry in feed.entries[:3]:
+            # This follows the same clickable link style
             st.markdown(f"**[{entry.title.split(' - ')[0]}]({entry.link})**")
             st.caption(f"Published: {entry.published}")
-    except Exception as e:
-        st.error("Could not load international news feed at this time.")
+    except:
+        st.error("Could not load international news feed.")
 
 # --- 12. FOOTER ---
 st.divider()
-st.markdown(
-    f"""
-    <div style="text-align: center; color: gray;">
-        <p>BENJI LIMITED Portal v2.0 | Admin: { "Yaw (Manual Mode)" if 'use_manual' in locals() and use_manual else "Automated System" }</p>
-    </div>
-    """, 
-    unsafe_allow_html=True
-)
+status_text = "Manual (Programmer)" if (admin_key == "yaw2026" and st.session_state.manual_active) else "Automated System"
+st.markdown(f"<p style='text-align: center; color: gray;'>BENJI LIMITED Portal | Status: {status_text}</p>", unsafe_allow_html=True)
