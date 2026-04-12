@@ -51,7 +51,7 @@ if 'initialized' not in st.session_state:
         # This will center the logo automatically
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            st.image("logo.png", width=400,height=700)
+            st.image("logo.png",height=700)
         
         st.markdown('<h2 class="loading-text">🚀 Loading Farmer Insights...</h2>', unsafe_allow_html=True)
         
