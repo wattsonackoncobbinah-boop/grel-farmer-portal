@@ -69,68 +69,64 @@ with st.sidebar:
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
-# --- FARMER-FRIENDLY ACCESSIBILITY CSS ---
+# --- HIGH-VISIBILITY DEEP BLACK CSS ---
 st.markdown(f"""
     <style>
-    /* 1. THE MAIN BACKGROUND (SWITCHED TO WHITE/LIGHT) */
+    /* 1. FORCE MAIN BACKGROUND TO WHITE */
     .stApp {{
         background-color: #FFFFFF !important;
         background-image: none !important;
     }}
 
-    /* 2. HEADER STYLING (LARGE & BOLD) */
-    h1 {{
-        color: #004600 !important; /* GREL Green */
-        font-size: 52px !important; /* Extra Large for Dad */
-        font-weight: 800 !important;
-        line-height: 1.2 !important;
+    /* 2. ALL TEXT TO DEEP BLACK & EXTRA LARGE */
+    /* Targets headers, paragraphs, labels, and spans */
+    h1, h2, h3, p, span, label, li, .stMarkdown {{
+        color: #000000 !important;
+        font-size: 24px !important; /* Base size for all text */
+        font-weight: 600 !important; /* Slightly bolder for clarity */
+        text-shadow: none !important; /* Remove shadows for cleaner look on white */
     }}
 
-    h2, h3 {{
-        color: #1A1A1A !important;
-        font-size: 36px !important; /* Increased from 28px */
-        font-weight: 700 !important;
-    }}
+    /* 3. SECTION HEADERS */
+    h1 {{ font-size: 55px !important; color: #004600 !important; }} /* GREL Dark Green */
+    h2 {{ font-size: 40px !important; border-bottom: 2px solid #000000; }}
+    h3 {{ font-size: 32px !important; }}
 
-    /* 3. BODY TEXT (HIGH CONTRAST) */
-    p, span, label {{
-        color: #000000 !important; /* Pure Black for maximum contrast */
-        font-size: 22px !important; /* Large enough to read without glasses */
-        font-weight: 500 !important;
-    }}
-
-    /* 4. METRICS (THE PRICES - CRITICAL INFO) */
+    /* 4. METRICS (THE PRICE VALUES) */
     [data-testid="stMetricValue"] {{
-        color: #28a745 !important; 
-        font-size: 60px !important; /* Massive display for the price */
+        color: #1E7E34 !important; /* Deep Forest Green for Money */
+        font-size: 65px !important; 
         font-weight: 900 !important;
     }}
 
     [data-testid="stMetricLabel"] {{
-        color: #333333 !important;
-        font-size: 20px !important;
-        font-weight: bold !important;
-    }}
-
-    /* 5. NEWS LINKS (BIG & CLICKABLE) */
-    a {{
-        color: #0056b3 !important; /* Standard Web Blue for familiarity */
+        color: #000000 !important;
         font-size: 22px !important;
         font-weight: bold !important;
-        text-decoration: underline !important;
-    }}
-    
-    .stCaption {{
-        color: #555555 !important;
-        font-size: 16px !important; /* Bigger captions */
     }}
 
-    /* 6. SIDEBAR TEXT (CONTRAST WITH YOUR CUSTOM COLOR) */
-    /* If your sidebar is black, this makes the text white. 
-       If your sidebar is white, change this to #000000 */
-    [data-testid="stSidebar"] p, [data-testid="stSidebar"] label {{
-        color: white !important;
+    /* 5. SIDEBAR TEXT (IF SIDEBAR IS LIGHT) */
+    [data-testid="stSidebar"] p, 
+    [data-testid="stSidebar"] span, 
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] .stMarkdown {{
+        color: #000000 !important; 
         font-size: 20px !important;
+    }}
+
+    /* 6. BUTTONS & INTERACTIVE ELEMENTS */
+    .stButton>button {{
+        font-size: 22px !important;
+        font-weight: bold !important;
+        border: 2px solid #000000 !important;
+    }}
+
+    /* 7. LINKS (NEWS HEADLINES) */
+    a {{
+        color: #0000EE !important; /* Traditional Deep Blue */
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        text-decoration: underline !important;
     }}
     </style>
     """, unsafe_allow_html=True)
