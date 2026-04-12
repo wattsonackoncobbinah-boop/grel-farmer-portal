@@ -69,6 +69,72 @@ with st.sidebar:
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
+# --- FARMER-FRIENDLY ACCESSIBILITY CSS ---
+st.markdown(f"""
+    <style>
+    /* 1. THE MAIN BACKGROUND (SWITCHED TO WHITE/LIGHT) */
+    .stApp {{
+        background-color: #FFFFFF !important;
+        background-image: none !important;
+    }}
+
+    /* 2. HEADER STYLING (LARGE & BOLD) */
+    h1 {{
+        color: #004600 !important; /* GREL Green */
+        font-size: 52px !important; /* Extra Large for Dad */
+        font-weight: 800 !important;
+        line-height: 1.2 !important;
+    }}
+
+    h2, h3 {{
+        color: #1A1A1A !important;
+        font-size: 36px !important; /* Increased from 28px */
+        font-weight: 700 !important;
+    }}
+
+    /* 3. BODY TEXT (HIGH CONTRAST) */
+    p, span, label {{
+        color: #000000 !important; /* Pure Black for maximum contrast */
+        font-size: 22px !important; /* Large enough to read without glasses */
+        font-weight: 500 !important;
+    }}
+
+    /* 4. METRICS (THE PRICES - CRITICAL INFO) */
+    [data-testid="stMetricValue"] {{
+        color: #28a745 !important; 
+        font-size: 60px !important; /* Massive display for the price */
+        font-weight: 900 !important;
+    }}
+
+    [data-testid="stMetricLabel"] {{
+        color: #333333 !important;
+        font-size: 20px !important;
+        font-weight: bold !important;
+    }}
+
+    /* 5. NEWS LINKS (BIG & CLICKABLE) */
+    a {{
+        color: #0056b3 !important; /* Standard Web Blue for familiarity */
+        font-size: 22px !important;
+        font-weight: bold !important;
+        text-decoration: underline !important;
+    }}
+    
+    .stCaption {{
+        color: #555555 !important;
+        font-size: 16px !important; /* Bigger captions */
+    }}
+
+    /* 6. SIDEBAR TEXT (CONTRAST WITH YOUR CUSTOM COLOR) */
+    /* If your sidebar is black, this makes the text white. 
+       If your sidebar is white, change this to #000000 */
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] label {{
+        color: white !important;
+        font-size: 20px !important;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
 # --- 5. CALCULATION ENGINE ---
 def predict_grel_price(global_price, exchange_rate):
     k_factor = 0.365 
