@@ -41,7 +41,7 @@ if 'initialized' not in st.session_state:
         # Keep the CSS for the loading text
         st.markdown("""
             <style>
-            .loading-text { text-align: center; color: black; margin-top: 20px; }
+            .loading-text { text-align: center; color: white; margin-top: 20px; }
             </style>
         """, unsafe_allow_html=True)
         
