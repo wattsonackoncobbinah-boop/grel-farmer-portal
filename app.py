@@ -8,43 +8,31 @@ import calendar
 import feedparser
 import base64
 
-# --- PREDICTION ENGINE INPUTS ---
-# These are the global factors you track 2-3 days before GREL release
-global_market_trend = 1.65  # Current Singapore Commodity Price ($/kg)
-prev_grel_price = 5.45      # The price from the month before
-usd_to_ghs = 13.50          # Current Exchange Rate
+import streamlit as st
+import streamlit.components.v1 as components
+import requests
+from streamlit_lottie import st_lottie
+import time
+import datetime
+import calendar
+import feedparser
 
-# --- 1. PREDICTION LOGIC ---
+# --- 1. CONFIG & PREDICTION LOGIC ---
+st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
+
+# These are your "Feature 1" inputs
+global_market_trend = 1.65  # SICOM Price ($/kg)
+prev_grel_price = 5.45      # Last month
+usd_to_ghs = 13.50          # Exchange Rate
+
 def predict_grel_price(global_price, exchange_rate):
-    # This formula can be tuned as we get more data
-    # We assume a processing/logistics margin of roughly 20-30%
     raw_conversion = global_price * exchange_rate
-    predicted_price = raw_conversion * 0.75  # 0.75 is the 'GREL Factor'
+    # 0.75 is your "GREL Factor" - tune this as you learn their margins!
+    predicted_price = raw_conversion * 0.75 
     return round(predicted_price, 2)
 
 prediction = predict_grel_price(global_market_trend, usd_to_ghs)
-
-# --- 4. PREDICTION DASHBOARD (MOBILE OPTIMIZED) ---
-st.subheader("🔮 Price Forecast (Early Insight)")
-
-col_pred, col_trend = st.columns(2)
-
-with col_pred:
-    delta_val = round(prediction - prev_grel_price, 2)
-    st.metric(
-        label="Predicted GREL Price", 
-        value=f"₵{prediction}", 
-        delta=f"{delta_val} from last month"
-    )
-
-with col_trend:
-    # Logic to show if market is bullish or bearish
-    if delta_val > 0:
-        st.success("Trend: 📈 Rising Market")
-    else:
-        st.warning("Trend: 📉 Potential Dip")
-
-st.info("💡 This prediction is based on global SICOM trends and current forex rates.")
+LOGO_URL = "logo.png"
 
 # --- 1. CONFIG & LOGO SETUP ---
 LOGO_URL = "logo.png"
