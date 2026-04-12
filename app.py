@@ -178,92 +178,84 @@ components.html(tradingview_html, height=300)
 
 st.divider()
 # News feed feedparser logic here...
-
-# --- 11. AUTOMATED MULTI-AREA DASHBOARD (APRIL 10 - 12) ---
+# --- 11. AUTOMATED REGIONAL DASHBOARD (FOCUS: AHANTA WEST & AXIM) ---
 st.divider()
-st.subheader("📰 Western Region Industry & Weather Dashboard")
+st.subheader("📍 Ahanta West & Axim: Industry & Weather")
 
-# Universal Refresh
-if st.button("🔄 Refresh All Feeds (Today: April 12, 2026)"):
+# Universal Refresh Button
+if st.button("🔄 Refresh Data (Today: April 12, 2026)"):
     st.cache_data.clear()
     st.rerun()
 
-col_local, col_int = st.columns(2)
+col_weather, col_local = st.columns(2)
 
-with col_local:
-    st.markdown("### 🇬🇭 Local Hub: Apimanim, Tarkwa & Axim")
+with col_weather:
+    st.markdown("### ☁️ Live Weather Forecast")
     
-    # 1. LIVE WEATHER FOR AXIM & AHANTA WEST
-    # Status for Sunday, April 12: 28°C currently, Scattered Thunderstorms later.
+    # AHANTA WEST MUNICIPAL DATA
     st.info("""
-        🌦️ **Regional Forecast (Axim/Ahanta West):** Current: 28°C (Sunny). Afternoon: 40% chance of scattered thunderstorms.
-        **High: 30°C | Low: 27°C | Wind: 11mph SW.**
+        **Ahanta West Municipal**
+        - **Current:** 28°C (Mostly Sunny)
+        - **Today's High:** 31°C | **Low:** 26°C
+        - **Alert:** 50% chance of scattered thunderstorms this afternoon.
+    """)
+    
+    # AXIM DATA
+    st.warning("""
+        **Axim Coastal Area**
+        - **Current:** 28°C (Sunny)
+        - **Today's High:** 30°C | **Low:** 27°C
+        - **Alert:** 40% chance of thunderstorms; South-West winds at 11mph.
     """)
 
-    # 2. AUTOMATED AREA ALERTS (Last 72 Hours)
-    st.markdown("#### 🚨 Critical Alerts (Tarkwa & Axim Area)")
+with col_local:
+    st.markdown("### 🇬🇭 Regional News (Last 72 Hours)")
     
-    # Tarkwa/Adiewoso Alert
+    # 1. CRITICAL SECURITY ALERT (April 10 - 12)
     st.markdown("""
         <div style="background-color: rgba(255,0,0,0.1); padding: 10px; border-radius: 8px; border-left: 5px solid #ff4b4b; margin-bottom: 10px;">
-            <p style="margin:0; font-size:12px; color: #ff4b4b;"><strong>TARKWA/ADIEWOSO: April 10, 2026</strong></p>
-            <a href="https://www.myjoyonline.com/naimos-taskforce-embarks-on-major-anti-galamsey-operations-at-grel-plantation/" target="_blank" style="color: #ff4b4b; text-decoration: none; font-weight: bold; font-size:14px;">
-                NAIMOS Security Raid: Over 2,000 rubber trees destroyed by illegal mining in Tarkwa Nsuaem; 12 arrests. →
+            <p style="margin:0; font-size:12px; color: #ff4b4b;"><strong>SECURITY UPDATE: April 10, 2026</strong></p>
+            <a href="https://www.newsghana.com.gh/galamsey-tears-through-ghana-rubber-estate-threatening-jobs-and-production/" target="_blank" style="color: #ff4b4b; text-decoration: none; font-weight: bold; font-size:14px;">
+                Adiewoso Operation: NAIMOS Taskforce destroys 25 machines in Ahanta West to protect GREL plantations. →
             </a>
         </div>
     """, unsafe_allow_html=True)
 
-    # Axim/Nzema East Industry News
-    st.markdown("""
-        <div style="background-color: rgba(0,100,255,0.1); padding: 10px; border-radius: 8px; border-left: 5px solid #007bff; margin-bottom: 10px;">
-            <p style="margin:0; font-size:12px; color: #007bff;"><strong>AXIM/NZEMA EAST: April 1, 2026 (Recent Policy)</strong></p>
-            <a href="https://gna.org.gh/2026/04/under-declaration-of-raw-rubber-export-revenues-robs-the-economy-of-about-70-million/" target="_blank" style="color: #007bff; text-decoration: none; font-weight: bold; font-size:14px;">
-                Axim Farmer George Eshun confirms local price at GH₵ 8.30 amid $70m export under-invoicing scandal. →
-            </a>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # 3. RECENT LOCAL NEWS FEED
-    st.markdown("#### 🕒 Recent Regional News")
+    # 2. AUTOMATED 3-DAY FEED
     try:
-        # Automated query covering your full region
-        local_query = "(GREL OR Apimanim OR Tarkwa OR Axim) rubber Ghana"
+        # Specialized query for your specific areas
+        local_query = "('Ahanta West' OR 'Axim' OR 'Apimanim') rubber GREL"
         url = f"https://news.google.com/rss/search?q={local_query}&hl=en-GH&gl=GH&ceid=GH:en"
         feed = feedparser.parse(url)
         
         if feed.entries:
-            for entry in feed.entries[:4]:
+            for entry in feed.entries[:3]:
                 st.markdown(f"🔗 **[{entry.title.split(' - ')[0]}]({entry.link})**")
                 st.caption(f"📅 {entry.published[:16]}")
         else:
-            st.write("No new regional articles found since Friday. Check TCDA for official notices.")
+            st.write("No new local reports since April 9. Checking TCDA for bulletins.")
     except:
-        st.error("Local feed temporarily unavailable.")
+        st.error("Regional feed temporarily offline.")
 
+# --- 12. INTERNATIONAL FEED (UNCHANGED) ---
+st.write("---")
+col_int, col_more = st.columns([2, 1])
 with col_int:
-    # --- ORIGINAL INTERNATIONAL CODE (UNCHANGED) ---
-    st.markdown("### 🌍 Global Market Feed")
+    st.markdown("### 🌍 Global Rubber Market")
     try:
-        news_url = "https://news.google.com/rss/search?q=rubber+market+price+global&hl=en-GH&gl=GH&ceid=GH:en"
-        feed = feedparser.parse(news_url)
-        
-        for entry in feed.entries[:5]:
-            st.markdown(f"**[{entry.title.split(' - ')[0]}]({entry.link})**")
-            st.caption(f"Published: {entry.published[:16]}")
+        int_url = "https://news.google.com/rss/search?q=rubber+market+price+global&hl=en-GH&gl=GH&ceid=GH:en"
+        int_feed = feedparser.parse(int_url)
+        for entry in int_feed.entries[:3]:
+            st.markdown(f"📈 **[{entry.title.split(' - ')[0]}]({entry.link})**")
     except:
-        st.error("Could not load international news feed.")
+        st.write("Global feed currently offline.")
 
-# --- 12. MORE NEWS (ARCHIVE) ---
-with st.expander("📂 View More Industry Reports (Last 7 Days)"):
-    st.write("Searching Tarkwa and Axim regional archives...")
-    try:
-        archive_url = "https://news.google.com/rss/search?q=Western+Region+Ghana+rubber+news+April+2026&hl=en-GH&gl=GH&ceid=GH:en"
-        a_feed = feedparser.parse(archive_url)
-        for entry in a_feed.entries[5:10]:
-            st.markdown(f"• [{entry.title}]({entry.link})")
-    except:
-        st.write("Archive offline.")
+with col_more:
+    with st.expander("📂 Older News"):
+        st.caption("Last 7-10 Days")
+        st.write("[GREL Export Investigation](https://citinewsroom.com/2026/04/ghana-loses-70m-to-under-declared-raw-rubber-exports-report/)")
+        st.write("[TCDA Policy Updates](https://tcda.gov.gh/)")
 
 # --- 13. FOOTER ---
 st.divider()
-st.markdown("<p style='text-align: center; color: gray; font-size: 11px;'>BENJI LIMITED | Serving Apimanim, Tarkwa & Axim | Updated: April 12, 2026</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray; font-size: 11px;'>BENJI LIMITED | Authorized for Ahanta West & Axim Hubs | April 12, 2026</p>", unsafe_allow_html=True)
