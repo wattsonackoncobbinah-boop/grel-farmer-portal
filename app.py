@@ -5,6 +5,9 @@ import datetime
 import calendar
 import feedparser # All imports at the top
 
+# SET YOUR LOGO URL HERE
+LOGO_URL = "https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png"
+
 # 1. MUST BE FIRST
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 
