@@ -41,20 +41,26 @@ if 'initialized' not in st.session_state:
             <style>
             @keyframes pulse-grow { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
             .splash-logo { display: block; margin: auto; animation: pulse-grow 2s infinite ease-in-out; }
-            .loading-text { text-align: center; color: white; }
+            .loading-text { text-align: center; color: white; font-family: sans-serif; }
             </style>
         """, unsafe_allow_html=True)
+        
         st.markdown("<br><br><br>", unsafe_allow_html=True)
-        st.markdown(f'<img src="{LOGO_URL}" class="splash-logo" width="350">', unsafe_allow_html=True)
+        
+        # FIXED LINE: We use the full web address here so the HTML can see it immediately
+        st.markdown('<img src="https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png" class="splash-logo" width="350">', unsafe_allow_html=True)
+        
         st.markdown('<h2 class="loading-text">🚀 Loading Farmer Insights...</h2>', unsafe_allow_html=True)
+        
         bar = st.progress(0)
         for i in range(100):
             time.sleep(0.01)
             bar.progress(i + 1)
         time.sleep(0.5)
+        
     placeholder.empty()
     st.session_state['initialized'] = True
-
+    
 # --- 4. BACKGROUND & SIDEBAR STYLING ---
 st.markdown("""
     <style>
