@@ -60,7 +60,11 @@ if 'initialized' not in st.session_state:
     placeholder.empty()
     st.session_state['initialized'] = True
 
-# --- 4. SIDEBAR SECURE OVERRIDE (PROGRAMMER ONLY) ---
+# --- 1. INITIALIZE COLOR IN SESSION STATE ---
+if 'sidebar_color' not in st.session_state:
+    st.session_state.sidebar_color = "#004600" # Default GREL Green
+
+# --- 2. SIDEBAR & SECURE PROGRAMMER OVERRIDE ---
 with st.sidebar:
     st.image(LOGO_URL, use_container_width=True)
     st.header("App Settings")
@@ -70,21 +74,49 @@ with st.sidebar:
     
     if admin_key == "yaw2026":
         st.success("Admin Mode Active")
+        
+        # NEW: Color Settings for the Programmer
+        with st.expander("🎨 Theme Settings"):
+            chosen_color = st.color_picker("Pick Sidebar Color", st.session_state.sidebar_color)
+            if st.button("Update Theme"):
+                st.session_state.sidebar_color = chosen_color
+                st.rerun()
+
         use_manual = st.toggle("Enable Manual Override", value=False)
         if use_manual:
             usd_to_ghs = st.number_input("Set FX:", value=14.50)
             current_grel_gate_price = st.number_input("Set GREL Price:", value=8.30)
             tcda_min_price = st.number_input("Set TCDA Floor:", value=9.11)
         else:
+            # Automation logic remains here...
             usd_to_ghs = get_live_exchange_rate()
             tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
             current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
     else:
-        # Default Automation for Farmers
+        # Default for users
         usd_to_ghs = get_live_exchange_rate()
-        tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
-        current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
+        tcda_min_price = 9.11
+        current_grel_gate_price = 8.30
 
+# --- 3. DYNAMIC STYLING (USES THE CHOSEN COLOR) ---
+st.markdown(f"""
+    <style>
+    .stApp {{
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                    url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
+        background-size: cover; background-attachment: fixed;
+    }}
+    
+    /* DYNAMIC SIDEBAR COLOR */
+    [data-testid="stSidebar"] {{
+        background-color: {st.session_state.sidebar_color} !important;
+    }}
+
+    h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {{
+        color: white !important; text-shadow: 2px 2px 4px #000000;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
 # --- 5. CALCULATION ENGINE ---
 def predict_grel_price(global_price, exchange_rate):
     k_factor = 0.365 
