@@ -112,41 +112,43 @@ with st.sidebar:
     st.header("App Settings")
     st.write("Welcome, Farmer! Check the latest rubber rates below.")
     st.info("Updates every 15 minutes.")
-# --- WEATHER SECTION: PRINCESS & AXIM ROAD CORRIDOR ---
-st.sidebar.divider()
-st.sidebar.subheader("🌦️ Local Plantation Weather")
+import requests
+from streamlit_lottie import st_lottie
 
-# Manual Entry for Accuracy
-target_town = st.sidebar.text_input("Enter Town (e.g., Axim, Princess Town, Dixcove):", value="Princess Town")
+# --- WEATHER ANIMATION LOGIC ---
+def load_lottieurl(url: str):
+    r = requests.get(url)
+    return r.json() if r.status_code == 200 else None
 
-# Logic to map specific GREL/Outgrower towns to the weather feed
-def get_weather_url(town):
-    town_slugs = {
-        "axim": "axim_ghana_2303534",
-        "princess town": "princes-town_ghana_2300063",
-        "dixcove": "dixcove_ghana_2302302",
-        "agona nkwanta": "agona-nkwanta_ghana_2304670",
-        "akwidaa": "akwidaa_ghana_2304610"
-    }
-    # Default to Princess Town if not in list
-    slug = town_slugs.get(town.lower(), "princes-town_ghana_2300063")
-    return f"https://www.meteoblue.com/en/weather/widget/three/{slug}?geosize=inline&days=2&tempunit=CELSIUS&windunit=KILOMETER_PER_HOUR&layout=dark"
+# Pre-load the animations
+sun_anim = load_lottieurl("https://lottie.host/8044737d-2b9a-4c91-95c5-7f414e21a8f9/SgLqT1v7rR.json")
+rain_anim = load_lottieurl("https://lottie.host/6770f90c-6627-4c4c-859a-1c05d89f7831/L66XpXv9jI.json")
+cloud_anim = load_lottieurl("https://lottie.host/5f5e27a6-2035-4200-8800-476719e7104b/Zp0p9r9jX0.json")
 
-if target_town:
-    weather_url = get_weather_url(target_town)
-    weather_html = f"""
-    <div style="width: 100%;">
-        <iframe width="100%" height="150" src="{weather_url}" 
-        frameborder="0" scrolling="NO" allowtransparency="true" 
-        sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>
-    </div>
-    """
-    components.html(weather_html, height=160)
+def get_weather_status(city):
+    try:
+        # We ask wttr.in for the condition in 1 word
+        response = requests.get(f"https://wttr.in/{city}?format=%C")
+        return response.text.lower()
+    except:
+        return "sunny" # Default
+
+# --- SIDEBAR WEATHER DISPLAY ---
+with st.sidebar:
+    st.divider()
+    st.subheader(f"🌦️ {target_town} Sky View")
     
-    # ⚠️ CRITICAL TAPPING ALERTS (April 2026)
-    st.sidebar.caption(f"Showing live data for {target_town.title()}")
-    st.sidebar.warning("🕒 **Rain Watch:** If rain is forecast within 2 hours of tapping, apply rain guards or delay tapping to prevent latex loss (washout).")
-
+    condition = get_weather_status(target_town)
+    
+    if "rain" in condition or "shower" in condition:
+        st_lottie(rain_anim, height=150, key="rain")
+        st.error("⚠️ **Rain Alert:** High washout risk. Consider rain guards.")
+    elif "cloud" in condition or "overcast" in condition:
+        st_lottie(cloud_anim, height=150, key="cloud")
+        st.warning("☁️ **Cloudy:** Keep an eye on the sky before tapping.")
+    else:
+        st_lottie(sun_anim, height=150, key="sun")
+        st.success("☀️ **Clear Skies:** Optimal conditions for tapping!")
 
 # --- 6. SMART PRICE REVEAL LOGIC ---
 st.divider()
