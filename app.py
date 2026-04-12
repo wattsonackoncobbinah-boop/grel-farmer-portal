@@ -38,46 +38,44 @@ def get_weather_status(city):
 if 'initialized' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
-        # CSS to match the marble/cream background of the Benji logo
+        # Using the exact Marble/Cream Hex code from your Benji logo: #F2EDE4
         st.markdown("""
             <style>
+            /* Force the background color on the loading screen */
             .stApp {
-                background-color: #F1ECE4 !important; /* Cream/Marble color from logo */
+                background-color: #F2EDE4 !important;
+                background-image: none !important; /* This removes your 'dad.jpg' during loading */
             }
             .loading-text-fs {
-                color: #333333 !important; /* Dark grey/black for readability */
+                color: #2D2D2D !important;
                 text-align: center;
-                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                margin-top: 30px;
-                font-weight: 300;
-                letter-spacing: 1px;
-                text-shadow: none !important; /* Removes shadows for a clean look */
-            }
-            /* Making the progress bar blend in with a gold tint from your logo */
-            .stProgress > div > div > div > div {
-                background-color: #B59A5D !important; 
+                font-family: sans-serif;
+                margin-top: 25px;
+                font-weight: bold;
+                text-shadow: none !important;
             }
             </style>
         """, unsafe_allow_html=True)
         
-        st.markdown("<br><br><br><br>", unsafe_allow_html=True)
+        st.write("<br><br><br>", unsafe_allow_html=True)
         
-        # Center the logo
-        col1, col2, col3 = st.columns([1, 4, 1])
+        # We use columns to center it
+        col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            # IMPORTANT: Change "logo.png.jpg" to whatever your file is named on GitHub
+            # Check GitHub: if your file is named logo.png, change this line!
             st.image("logo.png.jpg", use_container_width=True)
-            st.markdown('<h2 class="loading-text-fs">BENJI LIMITED • PORTAL INITIALIZING</h2>', unsafe_allow_html=True)
+            st.markdown('<h1 class="loading-text-fs">BENJI LIMITED</h1>', unsafe_allow_html=True)
         
-        # Smooth progress bar
+        # Progress bar
         bar = st.progress(0)
         for i in range(100):
-            time.sleep(0.015)
+            time.sleep(0.01)
             bar.progress(i + 1)
-        time.sleep(0.5)
+        time.sleep(0.4)
         
     placeholder.empty()
     st.session_state['initialized'] = True
+
 # --- 4. BACKGROUND & SIDEBAR STYLING ---
 st.markdown("""
     <style>
