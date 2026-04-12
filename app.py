@@ -63,15 +63,15 @@ if 'initialized' not in st.session_state:
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             # Check GitHub: if your file is named logo.png, change this line!
-            st.image("logo.png.jpg", use_container_width=True)
+            st.image("logo.png", use_container_width=True)
             st.markdown('<h1 class="loading-text-fs">BENJI LIMITED</h1>', unsafe_allow_html=True)
         
         # Progress bar
         bar = st.progress(0)
         for i in range(100):
-            time.sleep(0.01)
+            time.sleep(0.05)
             bar.progress(i + 1)
-        time.sleep(0.4)
+        time.sleep(0.5)
         
     placeholder.empty()
     st.session_state['initialized'] = True
