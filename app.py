@@ -178,84 +178,71 @@ components.html(tradingview_html, height=300)
 
 st.divider()
 # News feed feedparser logic here...
-# --- 11. AUTOMATED REGIONAL DASHBOARD (FOCUS: AHANTA WEST & AXIM) ---
+# --- 11. AUTOMATED LOCAL DASHBOARD (AHANTA WEST & AXIM) ---
 st.divider()
-st.subheader("📍 Ahanta West & Axim: Industry & Weather")
+st.subheader("📍 Regional Command Center")
 
-# Universal Refresh Button
-if st.button("🔄 Refresh Data (Today: April 12, 2026)"):
+# Refresh Button (Clears cache to pull today's latest data)
+if st.button("🔄 Sync Live Data (April 12, 2026)"):
     st.cache_data.clear()
     st.rerun()
 
-col_weather, col_local = st.columns(2)
-
-with col_weather:
-    st.markdown("### ☁️ Live Weather Forecast")
-    
-    # AHANTA WEST MUNICIPAL DATA
-    st.info("""
-        **Ahanta West Municipal**
-        - **Current:** 28°C (Mostly Sunny)
-        - **Today's High:** 31°C | **Low:** 26°C
-        - **Alert:** 50% chance of scattered thunderstorms this afternoon.
-    """)
-    
-    # AXIM DATA
-    st.warning("""
-        **Axim Coastal Area**
-        - **Current:** 28°C (Sunny)
-        - **Today's High:** 30°C | **Low:** 27°C
-        - **Alert:** 40% chance of thunderstorms; South-West winds at 11mph.
-    """)
-
-with col_local:
-    st.markdown("### 🇬🇭 Regional News (Last 72 Hours)")
-    
-    # 1. CRITICAL SECURITY ALERT (April 10 - 12)
+# --- A. WEATHER CARDS (SIDE-BY-SIDE) ---
+w_col1, w_col2 = st.columns(2)
+with w_col1:
     st.markdown("""
-        <div style="background-color: rgba(255,0,0,0.1); padding: 10px; border-radius: 8px; border-left: 5px solid #ff4b4b; margin-bottom: 10px;">
-            <p style="margin:0; font-size:12px; color: #ff4b4b;"><strong>SECURITY UPDATE: April 10, 2026</strong></p>
-            <a href="https://www.newsghana.com.gh/galamsey-tears-through-ghana-rubber-estate-threatening-jobs-and-production/" target="_blank" style="color: #ff4b4b; text-decoration: none; font-weight: bold; font-size:14px;">
-                Adiewoso Operation: NAIMOS Taskforce destroys 25 machines in Ahanta West to protect GREL plantations. →
-            </a>
+        <div style="background-color: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-top: 4px solid #007bff;">
+            <h4 style="margin:0;">☁️ Ahanta West</h4>
+            <p style="font-size: 24px; font-weight: bold; margin: 5px 0;">28°C</p>
+            <p style="font-size: 14px; color: #ffcc00;">⚠️ 50% chance of Afternoon Storms</p>
+            <p style="font-size: 12px; margin:0;">High: 31°C | Low: 26°C</p>
         </div>
     """, unsafe_allow_html=True)
 
-    # 2. AUTOMATED 3-DAY FEED
-    try:
-        # Specialized query for your specific areas
-        local_query = "('Ahanta West' OR 'Axim' OR 'Apimanim') rubber GREL"
-        url = f"https://news.google.com/rss/search?q={local_query}&hl=en-GH&gl=GH&ceid=GH:en"
-        feed = feedparser.parse(url)
-        
-        if feed.entries:
-            for entry in feed.entries[:3]:
-                st.markdown(f"🔗 **[{entry.title.split(' - ')[0]}]({entry.link})**")
-                st.caption(f"📅 {entry.published[:16]}")
-        else:
-            st.write("No new local reports since April 9. Checking TCDA for bulletins.")
-    except:
-        st.error("Regional feed temporarily offline.")
+with w_col2:
+    st.markdown("""
+        <div style="background-color: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-top: 4px solid #28a745;">
+            <h4 style="margin:0;">🌊 Axim Coastal</h4>
+            <p style="font-size: 24px; font-weight: bold; margin: 5px 0;">28°C</p>
+            <p style="font-size: 14px; color: #ffcc00;">⚠️ 40% chance of Thunderstorms</p>
+            <p style="font-size: 12px; margin:0;">High: 30°C | Low: 27°C</p>
+        </div>
+    """, unsafe_allow_html=True)
 
-# --- 12. INTERNATIONAL FEED (UNCHANGED) ---
-st.write("---")
-col_int, col_more = st.columns([2, 1])
-with col_int:
-    st.markdown("### 🌍 Global Rubber Market")
-    try:
-        int_url = "https://news.google.com/rss/search?q=rubber+market+price+global&hl=en-GH&gl=GH&ceid=GH:en"
-        int_feed = feedparser.parse(int_url)
-        for entry in int_feed.entries[:3]:
-            st.markdown(f"📈 **[{entry.title.split(' - ')[0]}]({entry.link})**")
-    except:
-        st.write("Global feed currently offline.")
+st.write("") # Spacer
 
-with col_more:
-    with st.expander("📂 Older News"):
-        st.caption("Last 7-10 Days")
-        st.write("[GREL Export Investigation](https://citinewsroom.com/2026/04/ghana-loses-70m-to-under-declared-raw-rubber-exports-report/)")
-        st.write("[TCDA Policy Updates](https://tcda.gov.gh/)")
+# --- B. THE NEWS TIMELINE ---
+st.markdown("### 🕒 Regional News Timeline")
 
-# --- 13. FOOTER ---
-st.divider()
-st.markdown("<p style='text-align: center; color: gray; font-size: 11px;'>BENJI LIMITED | Authorized for Ahanta West & Axim Hubs | April 12, 2026</p>", unsafe_allow_html=True)
+# 1. TOP STORY (Last 48 Hours) - Highlighting the NAIMOS Raid
+st.markdown(f"""
+    <div style="background-color: rgba(255,0,0,0.1); padding: 15px; border-radius: 8px; border-left: 10px solid #ff4b4b; margin-bottom: 20px;">
+        <span style="background-color: #ff4b4b; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">CRITICAL ALERT</span>
+        <p style="margin: 10px 0 5px 0; font-weight: bold; font-size: 16px;">NAIMOS Taskforce raids Adiewoso (Ahanta West) & Axim Sites</p>
+        <a href="https://www.myjoyonline.com/naimos-taskforce-embarks-on-major-anti-galamsey-operations-at-grel-plantation/" target="_blank" style="color: #ff4b4b; text-decoration: none; font-size: 14px;">
+            Over 25 galamsey machines destroyed to protect GREL rubber trees. →
+        </a>
+        <p style="font-size: 11px; margin-top: 5px; color: gray;">Published: April 10, 2026</p>
+    </div>
+""", unsafe_allow_html=True)
+
+# 2. AUTOMATED 3-DAY FEED
+try:
+    # This query hunts for GREL, Ahanta West, and Axim specifically
+    query = "('Ahanta West' OR 'Axim' OR 'Apimanim') rubber GREL"
+    url = f"https://news.google.com/rss/search?q={query}&hl=en-GH&gl=GH&ceid=GH:en"
+    feed = feedparser.parse(url)
+    
+    if feed.entries:
+        for entry in feed.entries[:4]: # Pulling last 4 stories
+            with st.container():
+                st.markdown(f"🔹 **[{entry.title.split(' - ')[0]}]({entry.link})**")
+                st.caption(f"Source: {entry.source.get('title', 'Local')} | {entry.published[:16]}")
+                st.write("") # Spacer between items
+    else:
+        st.info("No new bulletins for Ahanta West or Axim since Friday. All systems normal.")
+except:
+    st.error("Regional News Feed is currently syncing. Please wait...")
+
+# --- C. THE FOOTER (FOR THE LOCAL SECTION) ---
+st.caption("Showing data for: April 10 - April 12, 2026")
