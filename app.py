@@ -72,7 +72,7 @@ with st.sidebar:
 # --- 3. THE CSS (STRICT SIDEBAR ISOLATION) ---
 st.markdown(f"""
     <style>
-    /* 1. Main App Background (Always the Image) */
+    /* 1. Main App Background */
     .stApp {{
         background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
@@ -80,25 +80,33 @@ st.markdown(f"""
         background-attachment: fixed;
     }}
     
-    /* 2. SPECIFIC SIDEBAR OVERRIDE */
-    [data-testid="stSidebar"] {{
+    /* 2. THE FIX: Targeting the sidebar and its child containers */
+    section[data-testid="stSidebar"] {{
         background-color: {st.session_state.sidebar_color} !important;
-        background-image: none !important; /* Ensures the main background image doesn't bleed in */
+    }}
+
+    /* This removes the transparency/blur effect in newer Streamlit versions */
+    section[data-testid="stSidebar"] > div {{
+        background-color: {st.session_state.sidebar_color} !important;
+        background-image: none !important;
     }}
 
     /* 3. Text Visibility in Sidebar */
-    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label {{
+    [data-testid="stSidebar"] p, 
+    [data-testid="stSidebar"] span, 
+    [data-testid="stSidebar"] label, 
+    [data-testid="stSidebar"] h1, 
+    [data-testid="stSidebar"] h2 {{
         color: white !important;
     }}
 
-    /* 4. Main Content Text */
+    /* 4. Main Content Text Visibility */
     h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {{
         color: white !important; 
         text-shadow: 2px 2px 4px #000000;
     }}
     </style>
     """, unsafe_allow_html=True)
-
 # --- 5. CALCULATION ENGINE ---
 def predict_grel_price(global_price, exchange_rate):
     k_factor = 0.365 
