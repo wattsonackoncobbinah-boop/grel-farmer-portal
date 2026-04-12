@@ -6,16 +6,6 @@ import time
 import datetime
 import calendar
 import feedparser
-import base64
-
-import streamlit as st
-import streamlit.components.v1 as components
-import requests
-from streamlit_lottie import st_lottie
-import time
-import datetime
-import calendar
-import feedparser
 
 # --- 1. CONFIG & PREDICTION LOGIC ---
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
@@ -34,101 +24,62 @@ def predict_grel_price(global_price, exchange_rate):
 prediction = predict_grel_price(global_market_trend, usd_to_ghs)
 LOGO_URL = "logo.png"
 
-# --- 1. CONFIG & LOGO SETUP ---
-LOGO_URL = "logo.png"
-st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
-
-# --- 2. ROBUST ANIMATION LOADER (Crash Protection) ---
-def load_lottieurl(url: str):
-    try:
-        r = requests.get(url, timeout=5)
-        if r.status_code != 200:
-            return None
-        return r.json()
-    except:
-        return None
-
-# Pre-load animations outside the main loop
-sun_anim = load_lottieurl("https://lottie.host/8044737d-2b9a-4c91-95c5-7f414e21a8f9/SgLqT1v7rR.json")
-rain_anim = load_lottieurl("https://lottie.host/6770f90c-6627-4c4c-859a-1c05d89f7831/L66XpXv9jI.json")
-cloud_anim = load_lottieurl("https://lottie.host/5f5e27a6-2035-4200-8800-476719e7104b/Zp0p9r9jX0.json")
-
-def get_weather_status(city):
-    try:
-        response = requests.get(f"https://wttr.in/{city}?format=%C", timeout=5)
-        return response.text.lower()
-    except:
-        return "sunny"
-
-# --- 3. INITIALIZATION & SPLASH SCREEN ---
+# --- 2. INITIALIZATION & SPLASH SCREEN ---
 if 'initialized' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
-        # Using the exact Marble/Cream Hex code from your Benji logo: #F2EDE4
         st.markdown("""
             <style>
-            /* Force the background color on the loading screen */
-            .stApp {
-                background-color: #F2EDE4 !important;
-                background-image: none !important; /* This removes your 'dad.jpg' during loading */
-            }
-            .loading-text-fs {
-                color: #2D2D2D !important;
-                text-align: center;
-                font-family: sans-serif;
-                margin-top: 25px;
-                font-weight: bold;
-                text-shadow: none !important;
-            }
+            .stApp { background-color: #F2EDE4 !important; background-image: none !important; }
+            .loading-text-fs { color: #2D2D2D !important; text-align: center; font-family: sans-serif; margin-top: 25px; font-weight: bold; }
             </style>
         """, unsafe_allow_html=True)
-        
         st.write("<br><br><br>", unsafe_allow_html=True)
-        
-        # We use columns to center it
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            # Check GitHub: if your file is named logo.png, change this line!
-            st.image("logo.png", use_container_width=True)
+            st.image(LOGO_URL, use_container_width=True)
             st.markdown('<h1 class="loading-text-fs">BENJI LIMITED</h1>', unsafe_allow_html=True)
         
-        # Progress bar
         bar = st.progress(0)
         for i in range(100):
-            time.sleep(0.09)
+            time.sleep(0.03) # Speed up slightly to 3 seconds total
             bar.progress(i + 1)
         time.sleep(0.5)
-        
     placeholder.empty()
     st.session_state['initialized'] = True
 
-# --- 4. BACKGROUND & SIDEBAR STYLING ---
+# --- 3. STYLING ---
 st.markdown("""
     <style>
     .stApp {
-        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+        background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
         background-size: cover; background-attachment: fixed;
     }
-    h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {
-        color: white !important; text-shadow: 2px 2px 4px #000000;
-    }
-    [data-testid="stSidebar"] { background-color: rgba(0, 70, 0, 0.9); }
+    [data-testid="stMetric"] { background-color: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 5. MAIN CONTENT ---
-st.title("🚜 BENJI GREL FARMER'S PRICE & NEWS PORTAL")
+# --- 4. MAIN DASHBOARD ---
+st.title("🚜 BENJI GREL FARMER'S PORTAL")
 
-col_photo, col_metrics = st.columns([1, 2])
-with col_photo:
-    st.image("dad.jpg", width=300, caption="Portal Administrator")
-with col_metrics:
-    st.write("### Today's Market Summary")
-    m1, m2 = st.columns(2)
-    m1.metric("Global Rubber", "$1.62", "+0.04")
-    m2.metric("GREL Grade A", "7.40 GHS", "-0.10")
+# FEATURE 1 & 2: THE PREDICTION HUB (Mobile Optimized)
+st.write("### 🔮 Early Insight: Next Price Forecast")
+with st.container():
+    p1, p2 = st.columns(2)
+    with p1:
+        delta_val = round(prediction - prev_grel_price, 2)
+        st.metric(label="Predicted GREL Price", value=f"₵{prediction}", delta=f"{delta_val} vs Last Month")
+    with p2:
+        if delta_val > 0:
+            st.success("### 📈 TREND: RISING\nAdvice: Consider holding stock for the announcement.")
+        else:
+            st.warning("### 📉 TREND: DIPPING\nAdvice: Clear current inventory soon.")
 
+st.divider()
+
+# --- 5. SIDEBAR, WEATHER, AND REST OF CONTENT ---
+# (Keep your existing sidebar and TradingView code below this...)
 # --- 6. SIDEBAR & WEATHER ---
 with st.sidebar:
     st.image(LOGO_URL, use_container_width=True) 
