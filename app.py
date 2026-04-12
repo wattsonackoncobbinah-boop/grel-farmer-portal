@@ -139,6 +139,10 @@ def get_weather_status(city):
 # --- SIDEBAR WEATHER DISPLAY ---
 with st.sidebar:
     st.divider()
+    
+    # ADD THIS LINE: This creates the variable the app is looking for
+    target_town = st.text_input("📍 Enter Town for Weather:", value="Princess Town")
+    
     st.subheader(f"🌦️ {target_town} Sky View")
     
     condition = get_weather_status(target_town)
