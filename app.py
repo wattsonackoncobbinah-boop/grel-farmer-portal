@@ -51,13 +51,13 @@ if 'initialized' not in st.session_state:
         # This will center the logo automatically
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            st.image("logo.png", width=350)
+            st.image("logo.png", width=500)
         
         st.markdown('<h2 class="loading-text">🚀 Loading Farmer Insights...</h2>', unsafe_allow_html=True)
         
         bar = st.progress(0)
         for i in range(100):
-            time.sleep(0.01)
+            time.sleep(0.05)
             bar.progress(i + 1)
         time.sleep(0.5)
         
