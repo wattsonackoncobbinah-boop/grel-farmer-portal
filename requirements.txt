@@ -3,3 +3,4 @@ requests
 feedparser
 streamlit-lottie
 requests
+beautifulsoup4
