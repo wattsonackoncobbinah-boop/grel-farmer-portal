@@ -42,7 +42,7 @@ if 'initialized' not in st.session_state:
         st.markdown("""
             <style>
             .stApp {
-                background-color: #004600 !important;
+                background-color: #F1ECE4 !important;
             }
             .loading-text-fs {
                 color: white !important;
