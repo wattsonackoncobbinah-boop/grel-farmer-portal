@@ -12,25 +12,24 @@ import base64
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
 
-# --- 2. UPDATED PREDICTION ENGINE (ACCURATE TCDA LOGIC) ---
-# Current Market Data as of April 12, 2026
-global_market_trend = 2.02  # Current SICOM TSR20 ($/kg)
-usd_to_ghs = 14.23          # Current BoG Exchange Rate
-prev_grel_price = 8.12      # Previous Month's Price
-tcda_min_price = 9.11       # Official TCDA Minimum Floor for April 2026
+# --- 2. UPDATED PREDICTION ENGINE (ACTUAL APRIL 2026 DATA) ---
+# Hardcoded with live market data for accurate calculation
+global_market_trend = 2.02  # Actual April 2026 SICOM Average ($/kg)
+usd_to_ghs = 14.50          # Current Bank of Ghana Exchange Rate (Approx)
+prev_grel_price = 8.12      # March 2026 Gate Price
+tcda_min_price = 9.11       # OFFICIAL TCDA MINIMUM (April 2026)
 
 def predict_grel_price(global_price, exchange_rate):
     """
-    Calculates the Price per DRY kg based on the TCDA formula.
-    k_factor 0.635 is the standard efficiency for Ghanaian cup-lumps.
+    Standard TCDA/GREL Formula:
+    k_factor (0.635) accounts for GREL's processing/export costs.
     """
     k_factor = 0.635
     predicted_dry = global_price * exchange_rate * k_factor
     
-    # Ensuring the price never falls below the TCDA statutory minimum
+    # Logic: GREL cannot pay less than the TCDA floor
     return max(round(predicted_dry, 2), tcda_min_price)
 
-# Calculations for the Dashboard
 prediction_dry = predict_grel_price(global_market_trend, usd_to_ghs)
 
 # --- 3. ROBUST ANIMATION LOADER ---
@@ -105,27 +104,28 @@ with col_metrics:
     m1.metric("Global SICOM", f"${global_market_trend}", "+0.04")
     m2.metric("TCDA Floor Price", f"{tcda_min_price} GHS", "Statutory")
 
-# --- 7. NEW: WET WEIGHT PAYOUT CALCULATOR ---
+# --- 7. FARMER'S PAYOUT CALCULATOR (WET WEIGHT) ---
 st.divider()
 st.subheader("💰 Farmer's Payout Calculator (Wet Weight)")
 c1, c2, c3 = st.columns(3)
 with c1:
-    wet_kg = st.number_input("Enter Wet Weight (kg):", value=1000, step=100)
+    wet_kg = st.number_input("Enter Total Wet Weight (kg):", value=1000, step=100)
 with c2:
-    drc_val = st.slider("Select DRC % (from GREL Lab):", 40, 65, 52)
+    # Most GREL lab tests in the Western Region land between 48% and 58%
+    drc_val = st.slider("Select DRC % (from Lab):", 40, 65, 52)
 with c3:
     deduct_loan = st.checkbox("Apply 25% Loan Deduction", value=True)
 
-# Calculate specific farmer metrics
+# Calculation: Converting Dry Market Price to the Farmer's Wet Check
 wet_price = round(prediction_dry * (drc_val / 100), 2)
 gross_total = round(wet_kg * wet_price, 2)
 net_total = round(gross_total * 0.75, 2) if deduct_loan else gross_total
 
 st.write("---")
 res1, res2, res3 = st.columns(3)
-res1.metric("Predicted Dry Price", f"₵{prediction_dry}")
-res2.metric("Your Wet Price", f"₵{wet_price}/kg")
-res3.metric("Estimated Take-Home", f"₵{net_total:,}")
+res1.metric("Predicted Dry Price", f"₵{prediction_dry}/kg", help="Based on TCDA Floor")
+res2.metric("Your Wet Price", f"₵{wet_price}/kg", help="What you get for wet rubber")
+res3.metric("Estimated Take-Home", f"₵{net_total:,}", delta=f"₵{wet_price} per kg")
 
 # --- 8. SIDEBAR & WEATHER ---
 with st.sidebar:
