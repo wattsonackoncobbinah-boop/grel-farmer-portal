@@ -35,31 +35,25 @@ def get_weather_status(city):
         return "sunny"
 
 # --- 3. INITIALIZATION & SPLASH SCREEN ---
-def get_base64_of_bin_file(bin_file):
-    try:
-        with open(bin_file, 'rb') as f:
-            data = f.read()
-        return base64.b64encode(data).decode()
-    except:
-        return ""
-
 if 'initialized' not in st.session_state:
-    # Convert logo to base64 so it shows up instantly
-    img_base64 = get_base64_of_bin_file("logo.png")
-    
     placeholder = st.empty()
     with placeholder.container():
-        st.markdown(f"""
+        # Keep the CSS for the loading text
+        st.markdown("""
             <style>
-            @keyframes pulse-grow {{ 0% {{ transform: scale(1); opacity: 0.8; }} 50% {{ transform: scale(1.1); opacity: 1; }} 100% {{ transform: scale(1); opacity: 0.8; }} }}
-            .splash-logo {{ display: block; margin: auto; animation: pulse-grow 2s infinite ease-in-out; }}
-            .loading-text {{ text-align: center; color: white; }}
+            .loading-text { text-align: center; color: white; margin-top: 20px; }
             </style>
-            
-            <br><br><br>
-            <img src="data:image/png;base64,{img_base64}" class="splash-logo" width="350">
-            <h2 class="loading-text">🚀 Loading Farmer Insights...</h2>
         """, unsafe_allow_html=True)
+        
+        st.markdown("<br><br><br>", unsafe_allow_html=True)
+        
+        # USE NATIVE STREAMLIT COMMAND (Most Reliable)
+        # This will center the logo automatically
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image("logo.png", width=350)
+        
+        st.markdown('<h2 class="loading-text">🚀 Loading Farmer Insights...</h2>', unsafe_allow_html=True)
         
         bar = st.progress(0)
         for i in range(100):
