@@ -178,50 +178,55 @@ components.html(tradingview_html, height=300)
 
 st.divider()
 # News feed feedparser logic here...
-# --- 11. NEWS HUB (ALL LINKS) ---
+
+# --- 11. NEWS HUB (LOCAL & INTERNATIONAL) ---
 st.divider()
 st.subheader("📰 Rubber Industry News Hub")
 
 col_local, col_int = st.columns(2)
 
 with col_local:
-    st.markdown("### 🇬🇭 Local Updates")
-    # Clickable TCDA link using the dynamic price
-    st.markdown(f"""
-        <div style="background-color: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; border-left: 5px solid #ff4b4b;">
-            <p style="margin-bottom: 5px;"><strong>TCDA Official Floor Price</strong></p>
-            <a href="https://tcda.gov.gh/" target="_blank" style="color: #ff4b4b; text-decoration: none; font-weight: bold;">
-                Latest Rate: GH₵ {tcda_min_price}/kg → Click to View Official Notice
-            </a>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown("### 🇬🇭 Western Region & Local Updates")
     
-    st.write("") # Spacer
-    
-    # Clickable GREL link
+    # 1. Official Quick Links (Action Cards)
     st.markdown(f"""
-        <div style="background-color: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; border-left: 5px solid #28a745;">
-            <p style="margin-bottom: 5px;"><strong>GREL Corporate News</strong></p>
-            <a href="http://grelghana.com/" target="_blank" style="color: #28a745; text-decoration: none; font-weight: bold;">
-                Check GREL Outgrower Announcements →
+        <div style="background-color: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; border-left: 5px solid #28a745; margin-bottom: 10px;">
+            <a href="https://tcda.gov.gh/" target="_blank" style="color: #28a745; text-decoration: none; font-size: 14px; font-weight: bold;">
+                📢 Official TCDA Notice Board (Min: GH₵ {tcda_min_price})
             </a>
         </div>
     """, unsafe_allow_html=True)
 
-with col_int:
-    st.markdown("### 🌍 International Feed")
+    # 2. Dynamic Local News Feed
     try:
-        news_url = "https://news.google.com/rss/search?q=rubber+market+Ghana&hl=en-GH&gl=GH&ceid=GH:en"
-        feed = feedparser.parse(news_url)
+        # Specialized search for Rubber + GREL + Western Region
+        local_query = "GREL Ghana rubber OR 'rubber farmer' Western Region Ghana"
+        local_news_url = f"https://news.google.com/rss/search?q={local_query}&hl=en-GH&gl=GH&ceid=GH:en"
+        local_feed = feedparser.parse(local_news_url)
         
-        for entry in feed.entries[:3]:
-            # This follows the same clickable link style
-            st.markdown(f"**[{entry.title.split(' - ')[0]}]({entry.link})**")
-            st.caption(f"Published: {entry.published}")
+        if local_feed.entries:
+            for entry in local_feed.entries[:4]: # Show top 4 local stories
+                st.markdown(f"🔗 **[{entry.title.split(' - ')[0]}]({entry.link})**")
+                st.caption(f"Source: {entry.source.get('title', 'Local News')} | {entry.published[:16]}")
+        else:
+            st.write("No specific GREL news found today. Checking TCDA for updates...")
     except:
-        st.error("Could not load international news feed.")
+        st.error("Local news feed temporarily unavailable.")
+
+with col_int:
+    st.markdown("### 🌍 Global Market Feed")
+    try:
+        # General global rubber market trends
+        int_news_url = "https://news.google.com/rss/search?q=global+rubber+market+price&hl=en-GH&gl=GH&ceid=GH:en"
+        int_feed = feedparser.parse(int_news_url)
+        
+        for entry in int_feed.entries[:4]:
+            st.markdown(f"📈 **[{entry.title.split(' - ')[0]}]({entry.link})**")
+            st.caption(f"Published: {entry.published[:16]}")
+    except:
+        st.error("Global feed unavailable.")
 
 # --- 12. FOOTER ---
 st.divider()
-status_text = "Manual (Programmer)" if (admin_key == "yaw2026" and st.session_state.manual_active) else "Automated System"
-st.markdown(f"<p style='text-align: center; color: gray;'>BENJI LIMITED Portal | Status: {status_text}</p>", unsafe_allow_html=True)
+status_label = "🔴 Manual Override" if (admin_key == "yaw2026" and st.session_state.get('manual_active')) else "🟢 Live Automated"
+st.markdown(f"<p style='text-align: center; color: gray; font-size: 12px;'>BENJI LIMITED Portal v2.5 | System Status: {status_label}</p>", unsafe_allow_html=True)
