@@ -68,66 +68,81 @@ with st.sidebar:
         usd_to_ghs = get_live_exchange_rate()
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
-# --- HIGH-VISIBILITY DEEP BLACK CSS ---
+
+# --- 3. THE CSS (STRICT SIDEBAR ISOLATION) ---
+
 st.markdown(f"""
+
     <style>
-    /* 1. FORCE MAIN BACKGROUND TO WHITE */
+
+    /* 1. Main App Background */
+
     .stApp {{
-        background-color: #FFFFFF !important;
+
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+
+                    url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
+
+        background-size: cover; 
+
+        background-attachment: fixed;
+
+    }}
+
+    
+
+    /* 2. THE FIX: Targeting the sidebar and its child containers */
+
+    section[data-testid="stSidebar"] {{
+
+        background-color: {st.session_state.sidebar_color} !important;
+
+    }}
+
+
+
+    /* This removes the transparency/blur effect in newer Streamlit versions */
+
+    section[data-testid="stSidebar"] > div {{
+
+        background-color: {st.session_state.sidebar_color} !important;
+
         background-image: none !important;
+
     }}
 
-    /* 2. ALL TEXT TO DEEP BLACK & EXTRA LARGE */
-    /* Targets headers, paragraphs, labels, and spans */
-    h1, h2, h3, p, span, label, li, .stMarkdown {{
-        color: #000000 !important;
-        font-size: 24px !important; /* Base size for all text */
-        font-weight: 600 !important; /* Slightly bolder for clarity */
-        text-shadow: none !important; /* Remove shadows for cleaner look on white */
-    }}
 
-    /* 3. SECTION HEADERS */
-    h1 {{ font-size: 55px !important; color: #004600 !important; }} /* GREL Dark Green */
-    h2 {{ font-size: 40px !important; border-bottom: 2px solid #000000; }}
-    h3 {{ font-size: 32px !important; }}
 
-    /* 4. METRICS (THE PRICE VALUES) */
-    [data-testid="stMetricValue"] {{
-        color: #1E7E34 !important; /* Deep Forest Green for Money */
-        font-size: 65px !important; 
-        font-weight: 900 !important;
-    }}
+    /* 3. Text Visibility in Sidebar */
 
-    [data-testid="stMetricLabel"] {{
-        color: #000000 !important;
-        font-size: 22px !important;
-        font-weight: bold !important;
-    }}
-
-    /* 5. SIDEBAR TEXT (IF SIDEBAR IS LIGHT) */
     [data-testid="stSidebar"] p, 
+
     [data-testid="stSidebar"] span, 
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] .stMarkdown {{
-        color: #000000 !important; 
-        font-size: 20px !important;
+
+    [data-testid="stSidebar"] label, 
+
+    [data-testid="stSidebar"] h1, 
+
+    [data-testid="stSidebar"] h2 {{
+
+        color: white !important;
+
     }}
 
-    /* 6. BUTTONS & INTERACTIVE ELEMENTS */
-    .stButton>button {{
-        font-size: 22px !important;
-        font-weight: bold !important;
-        border: 2px solid #000000 !important;
+
+
+    /* 4. Main Content Text Visibility */
+
+    h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {{
+
+        color: white !important; 
+
+        text-shadow: 2px 2px 4px #000000;
+
     }}
 
-    /* 7. LINKS (NEWS HEADLINES) */
-    a {{
-        color: #0000EE !important; /* Traditional Deep Blue */
-        font-size: 22px !important;
-        font-weight: 700 !important;
-        text-decoration: underline !important;
-    }}
     </style>
+
     """, unsafe_allow_html=True)
 
 # --- 5. CALCULATION ENGINE ---
