@@ -156,7 +156,7 @@ if target_town:
         sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>
     </div>
     """
-    st.sidebar.components.v1.html(weather_html, height=160)
+    components.html(weather_html, height=160)
     
     # ⚠️ CRITICAL TAPPING ALERTS (April 2026)
     st.sidebar.caption(f"Showing live data for {target_town.title()}")
