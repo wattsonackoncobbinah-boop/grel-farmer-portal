@@ -68,7 +68,6 @@ with st.sidebar:
         usd_to_ghs = get_live_exchange_rate()
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
-
 # --- HIGH-VISIBILITY DEEP BLACK CSS ---
 st.markdown(f"""
     <style>
