@@ -1,9 +1,12 @@
 import streamlit as st
+from streamlit_lottie import st_lottie # This is the line that was crashing
+import requests
 import streamlit.components.v1 as components
 import time
 import datetime
 import calendar
 import feedparser # All imports at the top
+
 
 # SET YOUR LOGO URL HERE
 LOGO_URL = "https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png"
