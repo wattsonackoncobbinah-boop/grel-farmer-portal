@@ -38,23 +38,49 @@ def get_weather_status(city):
 if 'initialized' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
-        # Keep the CSS for the loading text
+        # This CSS makes the logo fill the background area
         st.markdown("""
             <style>
-            .loading-text { text-align: center; color: white; margin-top: 20px; }
+            /* This targets the container holding the splash screen */
+            [data-testid="stVerticalBlock"] > div:first-child {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: #004600; /* GREL Green background */
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .fullscreen-logo {
+                width: 80vw; /* Takes up 80% of the screen width */
+                max-width: 600px;
+                height: auto;
+                animation: pulse-grow 2s infinite ease-in-out;
+            }
+            @keyframes pulse-grow {
+                0% { transform: scale(1); opacity: 0.9; }
+                50% { transform: scale(1.05); opacity: 1; }
+                100% { transform: scale(1); opacity: 0.9; }
+            }
+            .loading-text-fs {
+                color: white;
+                font-size: 24px;
+                margin-top: 20px;
+                font-family: sans-serif;
+            }
             </style>
+            
+            <div style="text-align: center;">
+                <img src="https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png" class="fullscreen-logo">
+                <h2 class="loading-text-fs">🚀 Loading Farmer Insights...</h2>
+            </div>
         """, unsafe_allow_html=True)
         
-        st.markdown("<br><br><br>", unsafe_allow_html=True)
-        
-        # USE NATIVE STREAMLIT COMMAND (Most Reliable)
-        # This will center the logo automatically
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            st.image("logo.png", width=700)
-        
-        st.markdown('<h2 class="loading-text">🚀 Loading Farmer Insights...</h2>', unsafe_allow_html=True)
-        
+        # The progress bar will appear at the bottom of the screen
         bar = st.progress(0)
         for i in range(100):
             time.sleep(0.05)
@@ -63,7 +89,7 @@ if 'initialized' not in st.session_state:
         
     placeholder.empty()
     st.session_state['initialized'] = True
-    
+
 # --- 4. BACKGROUND & SIDEBAR STYLING ---
 st.markdown("""
     <style>
