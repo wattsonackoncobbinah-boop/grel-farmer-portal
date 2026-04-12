@@ -69,44 +69,6 @@ with st.sidebar:
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
-# --- 3. THE CSS (STRICT SIDEBAR ISOLATION) ---
-st.markdown(f"""
-    <style>
-    /* 1. Main App Background */
-    .stApp {{
-        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                    url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
-        background-size: cover; 
-        background-attachment: fixed;
-    }}
-    
-    /* 2. THE FIX: Targeting the sidebar and its child containers */
-    section[data-testid="stSidebar"] {{
-        background-color: {st.session_state.sidebar_color} !important;
-    }}
-
-    /* This removes the transparency/blur effect in newer Streamlit versions */
-    section[data-testid="stSidebar"] > div {{
-        background-color: {st.session_state.sidebar_color} !important;
-        background-image: none !important;
-    }}
-
-    /* 3. Text Visibility in Sidebar */
-    [data-testid="stSidebar"] p, 
-    [data-testid="stSidebar"] span, 
-    [data-testid="stSidebar"] label, 
-    [data-testid="stSidebar"] h1, 
-    [data-testid="stSidebar"] h2 {{
-        color: white !important;
-    }}
-
-    /* 4. Main Content Text Visibility */
-    h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {{
-        color: white !important; 
-        text-shadow: 2px 2px 4px #000000;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
 # --- 5. CALCULATION ENGINE ---
 def predict_grel_price(global_price, exchange_rate):
     k_factor = 0.365 
@@ -114,6 +76,74 @@ def predict_grel_price(global_price, exchange_rate):
     return max(round(calc, 2), tcda_min_price)
 
 prediction_dry = predict_grel_price(1.76, usd_to_ghs)
+# --- THE "PRO" CSS SECTION ---
+st.markdown(f"""
+    <style>
+    /* 1. Main Background */
+    .stApp {{
+        background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), 
+                    url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+    }}
+
+    /* 2. Global Text Styling */
+    h1 {{
+        color: #FFFFFF !important;
+        font-size: 42px !important;
+        font-weight: 800 !important;
+        text-shadow: 2px 2px 8px #000000;
+    }}
+
+    h2, h3 {{
+        color: #FFFFFF !important;
+        font-size: 28px !important;
+        text-shadow: 2px 2px 4px #000000;
+    }}
+
+    p, span, label {{
+        color: #F8F9FA !important; /* Soft White */
+        font-size: 16px !important;
+    }}
+
+    /* 3. Metrics (The Prices) */
+    [data-testid="stMetricValue"] {{
+        color: #00FF88 !important; /* Electric Green for the Money/Price */
+        font-size: 40px !important;
+        font-weight: bold !important;
+    }}
+
+    [data-testid="stMetricLabel"] {{
+        color: #BDC3C7 !important; /* Silver for the labels */
+        font-size: 14px !important;
+    }}
+
+    /* 4. News Links Styling */
+    a {{
+        color: #00FF88 !important; 
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.3s;
+    }}
+    
+    a:hover {{
+        color: #FFFFFF !important;
+        text-decoration: underline;
+    }}
+
+    /* 5. Captions (Dates) */
+    .stCaption {{
+        color: #BDC3C7 !important;
+        font-size: 12px !important;
+    }}
+
+    /* 6. Sidebar Text Control */
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] label {{
+        color: white !important;
+        font-size: 14px !important;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
 
 # --- 6. STYLING & BACKGROUND (RESTORED ORIGINAL) ---
 st.markdown("""
