@@ -8,7 +8,7 @@ import calendar
 import feedparser
 
 # --- 1. CONFIG & LOGO SETUP ---
-LOGO_URL = "https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png"
+LOGO_URL = "logo.png"
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 
 # --- 2. ROBUST ANIMATION LOADER (Crash Protection) ---
@@ -75,8 +75,7 @@ st.title("🚜 BENJI GREL FARMER'S PRICE & NEWS PORTAL")
 
 col_photo, col_metrics = st.columns([1, 2])
 with col_photo:
-    st.image("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg", width=300, caption="Portal Administrator")
-
+    st.image("dad.jpg", width=300, caption="Portal Administrator")
 with col_metrics:
     st.write("### Today's Market Summary")
     m1, m2 = st.columns(2)
