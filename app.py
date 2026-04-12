@@ -94,17 +94,17 @@ def predict_grel_price(global_price, exchange_rate):
 prediction_dry = predict_grel_price(1.76, usd_to_ghs)
 
 # --- 6. STYLING & BACKGROUND (RESTORED ORIGINAL) ---
-st.markdown(f"""
+st.markdown("""
     <style>
-    .stApp {{
-        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                    url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
-        background-size: cover; background-attachment: fixed;
-    }}
-    h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {{
-        color: white !important; text-shadow: 2px 2px 4px #000000;
-    }}
-    [data-testid="stSidebar"] {{ background-color: rgba(0, 70, 0, 0.9); }}
+    /* This changes the sidebar background to Black */
+    [data-testid="stSidebar"] {
+        background-color: #000000 !important;
+    }
+
+    /* This ensures the text inside the sidebar remains white and readable */
+    [data-testid="stSidebar"] .stText, [data-testid="stSidebar"] label, [data-testid="stSidebar"] p {
+        color: white !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
