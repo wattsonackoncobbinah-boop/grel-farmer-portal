@@ -38,40 +38,46 @@ def get_weather_status(city):
 if 'initialized' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
-        # 1. This CSS makes the background green and centers everything
+        # CSS to match the marble/cream background of the Benji logo
         st.markdown("""
             <style>
             .stApp {
-                background-color: #F1ECE4 !important;
+                background-color: #F1ECE4 !important; /* Cream/Marble color from logo */
             }
             .loading-text-fs {
-                color: white !important;
+                color: #333333 !important; /* Dark grey/black for readability */
                 text-align: center;
-                font-family: sans-serif;
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
                 margin-top: 30px;
+                font-weight: 300;
+                letter-spacing: 1px;
+                text-shadow: none !important; /* Removes shadows for a clean look */
+            }
+            /* Making the progress bar blend in with a gold tint from your logo */
+            .stProgress > div > div > div > div {
+                background-color: #B59A5D !important; 
             }
             </style>
         """, unsafe_allow_html=True)
         
         st.markdown("<br><br><br><br>", unsafe_allow_html=True)
         
-        # 2. Use the native Streamlit command to show the logo
-        # We know this works because it worked in your sidebar!
-        col1, col2, col3 = st.columns([1, 3, 1])
+        # Center the logo
+        col1, col2, col3 = st.columns([1, 4, 1])
         with col2:
-            st.image("logo.png", use_container_width=True)
-            st.markdown('<h2 class="loading-text-fs">🚀 Loading Farmer Insights...</h2>', unsafe_allow_html=True)
+            # IMPORTANT: Change "logo.png.jpg" to whatever your file is named on GitHub
+            st.image("logo.png.jpg", use_container_width=True)
+            st.markdown('<h2 class="loading-text-fs">BENJI LIMITED • PORTAL INITIALIZING</h2>', unsafe_allow_html=True)
         
-        # 3. The progress bar
+        # Smooth progress bar
         bar = st.progress(0)
         for i in range(100):
-            time.sleep(0.02)
+            time.sleep(0.015)
             bar.progress(i + 1)
         time.sleep(0.5)
         
     placeholder.empty()
     st.session_state['initialized'] = True
-
 # --- 4. BACKGROUND & SIDEBAR STYLING ---
 st.markdown("""
     <style>
