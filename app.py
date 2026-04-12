@@ -38,52 +38,34 @@ def get_weather_status(city):
 if 'initialized' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
-        # This CSS makes the logo fill the background area
+        # 1. This CSS makes the background green and centers everything
         st.markdown("""
             <style>
-            /* This targets the container holding the splash screen */
-            [data-testid="stVerticalBlock"] > div:first-child {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-                background-color: #004600; /* GREL Green background */
-                z-index: 9999;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            }
-            .fullscreen-logo {
-                width: 80vw; /* Takes up 80% of the screen width */
-                max-width: 600px;
-                height: auto;
-                animation: pulse-grow 2s infinite ease-in-out;
-            }
-            @keyframes pulse-grow {
-                0% { transform: scale(1); opacity: 0.9; }
-                50% { transform: scale(1.05); opacity: 1; }
-                100% { transform: scale(1); opacity: 0.9; }
+            .stApp {
+                background-color: #004600 !important;
             }
             .loading-text-fs {
-                color: white;
-                font-size: 24px;
-                margin-top: 20px;
+                color: white !important;
+                text-align: center;
                 font-family: sans-serif;
+                margin-top: 30px;
             }
             </style>
-            
-            <div style="text-align: center;">
-                <img src="https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png" class="fullscreen-logo">
-                <h2 class="loading-text-fs">🚀 Loading Farmer Insights...</h2>
-            </div>
         """, unsafe_allow_html=True)
         
-        # The progress bar will appear at the bottom of the screen
+        st.markdown("<br><br><br><br>", unsafe_allow_html=True)
+        
+        # 2. Use the native Streamlit command to show the logo
+        # We know this works because it worked in your sidebar!
+        col1, col2, col3 = st.columns([1, 3, 1])
+        with col2:
+            st.image("logo.png", use_container_width=True)
+            st.markdown('<h2 class="loading-text-fs">🚀 Loading Farmer Insights...</h2>', unsafe_allow_html=True)
+        
+        # 3. The progress bar
         bar = st.progress(0)
         for i in range(100):
-            time.sleep(0.05)
+            time.sleep(0.02)
             bar.progress(i + 1)
         time.sleep(0.5)
         
