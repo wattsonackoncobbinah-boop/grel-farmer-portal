@@ -35,7 +35,7 @@ def scrape_rubber_price(url):
 
 # --- 1. INITIALIZE COLOR IN SESSION STATE ---
 if 'sidebar_color' not in st.session_state:
-    st.session_state.sidebar_color = "#004600" # Initial default green
+    st.session_state.sidebar_color = "#DFE8DF" # Initial default green
 
 # --- 2. PROGRAMMER OVERRIDE & THEME SETTINGS ---
 with st.sidebar:
