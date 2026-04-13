@@ -18,46 +18,42 @@ date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 # --- 2. CONFIG & LOGO SETUP ---
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
-# --- 2.5 WELCOME SPLASH SCREEN (BULLETPROOF VERSION) ---
+
+# --- 2.5 WELCOME SPLASH SCREEN (LOGO COLOR MATCHED) ---
 if 'welcome_done' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
-        # Using CSS to force the clean cream background
-        st.markdown("""
+        st.markdown(f"""
             <style>
-            .stApp {
+            .stApp {{
                 background-color: #F2EDE4 !important;
                 background-image: none !important;
-            }
-            .welcome-title {
+            }}
+            .welcome-title {{
                 color: #000000 !important;
                 font-size: 40px !important;
                 font-weight: 800 !important;
                 text-align: center;
                 margin-top: 10px;
                 text-shadow: none !important;
-            }
+            }}
             </style>
         """, unsafe_allow_html=True)
         
-        # Using 3 columns to center everything perfectly
         left, mid, right = st.columns([1, 2, 1])
         with mid:
-            st.write("##") # Add some spacing at the top
-            # 1. LOCAL FILE: We use the same logo.png used in your sidebar
+            st.write("##") 
             try:
                 st.image("logo.png", width=250)
             except:
-                # 2. BACKUP URL: If local fails, try the GitHub link
                 st.image("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png", width=250)
             
             st.markdown('<div class="welcome-title">BENJI GREL FARMER PORTAL</div>', unsafe_allow_html=True)
             st.write("<p style='text-align: center; color: #444; font-size: 18px;'>Connecting Ghana's Rubber Community...</p>", unsafe_allow_html=True)
             
-            # The Progress Bar
             bar = st.progress(0)
             for i in range(100):
-                time.sleep(0.05) # <--- SLOWED DOWN slightly for your dad to read
+                time.sleep(0.05) 
                 bar.progress(i + 1)
             
             st.success("✅ System Secure & Ready")
@@ -86,6 +82,16 @@ def scrape_rubber_price(url):
     except:
         return None
 
+@st.cache_data(ttl=3600)
+def get_news_data(search_term):
+    try:
+        url = f"https://news.google.com/rss/search?q={search_term}&hl=en-GH&gl=GH&ceid=GH:en"
+        response = requests.get(url, timeout=5)
+        feed = feedparser.parse(response.content)
+        return feed.entries[:5]
+    except:
+        return []
+
 # --- 4. SESSION STATE & SIDEBAR ---
 if 'sidebar_color' not in st.session_state:
     st.session_state.sidebar_color = "#DFE8DF"
@@ -93,7 +99,6 @@ if 'sidebar_color' not in st.session_state:
 with st.sidebar:
     st.image(LOGO_URL, use_container_width=True)
     st.header("App Settings")
-    
     admin_key = st.text_input("🔑 Programmer Key:", type="password")
     
     if admin_key == "yaw2026":
@@ -117,29 +122,17 @@ with st.sidebar:
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
-# --- 5. THE CSS (RESTORED DARK THEME) ---
+# --- 5. THE MAIN CSS ---
 st.markdown(f"""
     <style>
     .stApp {{
         background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
-        background-size: cover; 
-        background-attachment: fixed;
+        background-size: cover; background-attachment: fixed;
     }}
-    section[data-testid="stSidebar"] {{
-        background-color: {st.session_state.sidebar_color} !important;
-    }}
-    section[data-testid="stSidebar"] > div {{
-        background-color: {st.session_state.sidebar_color} !important;
-        background-image: none !important;
-    }}
-    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label {{
-        color: white !important;
-    }}
-    h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {{
-        color: white !important; 
-        text-shadow: 2px 2px 4px #000000;
-    }}
+    section[data-testid="stSidebar"] {{ background-color: {st.session_state.sidebar_color} !important; }}
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label {{ color: white !important; }}
+    h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {{ color: white !important; text-shadow: 2px 2px 4px #000000; }}
     a {{ color: #00FF88 !important; font-weight: 600; text-decoration: none; }}
     </style>
     """, unsafe_allow_html=True)
@@ -156,10 +149,10 @@ prediction_dry = predict_grel_price(1.76, usd_to_ghs)
 st.title("🚜 BENJI GREL FARMER'S PORTAL")
 st.write(f"### Live Status: {today_str}")
 
-col_photo, col_metrics = st.columns([1, 2])
-with col_photo:
+col_p, col_m = st.columns([1, 2])
+with col_p:
     st.image("dad.jpg", width=300, caption="Portal Administrator")
-with col_metrics:
+with col_m:
     st.write("### Market Summary")
     m1, m2, m3 = st.columns(3)
     m1.metric("Exchange Rate", f"₵{usd_to_ghs}")
@@ -181,13 +174,12 @@ wet_price = round(prediction_dry * (drc_val / 100), 2)
 gross_total = round(wet_kg * wet_price, 2)
 net_total = round(gross_total * 0.75, 2) if deduct_loan else gross_total
 
-st.write("---")
-res1, res2, res3 = st.columns(3)
-res1.metric("Predicted Dry Price", f"₵{prediction_dry}/kg")
-res2.metric("Your Wet Price", f"₵{wet_price}/kg")
-res3.metric("Take-Home", f"₵{net_total:,}")
+r1, r2, r3 = st.columns(3)
+r1.metric("Predicted Dry Price", f"₵{prediction_dry}/kg")
+r2.metric("Your Wet Price", f"₵{wet_price}/kg")
+r3.metric("Take-Home", f"₵{net_total:,}")
 
-# --- 9. THE CHART (RESTORED) ---
+# --- 9. THE CHART ---
 st.subheader("📈 Live Global Rubber Market")
 tradingview_html = """
 <div style="height:450px; width:100%;"><div id="tv" style="height:100%;"></div>
@@ -196,57 +188,32 @@ tradingview_html = """
 """
 components.html(tradingview_html, height=450)
 
-# --- 10. NEWS DASHBOARD (RESTORED ORIGINAL TITLES) ---
+# --- 10. NEWS DASHBOARD ---
 st.divider()
 st.subheader(f"📰 Industry News ({date_range})")
 
-@st.cache_data(ttl=3600)
-def get_news_data(search_term):
-    try:
-        url = f"https://news.google.com/rss/search?q={search_term}&hl=en-GH&gl=GH&ceid=GH:en"
-        # 5-second limit ensures the calculator still works if the news is slow
-        response = requests.get(url, timeout=5)
-        feed = feedparser.parse(response.content)
-        return feed.entries[:5]
-    except:
-        return []
-
-# Refresh Button
-if st.button(f"🔄 Sync All Feeds for {today_str}"):
+if st.button(f"🔄 Sync Feeds for {today_str}"):
     st.cache_data.clear()
     st.rerun()
 
-col_local, col_int = st.columns(2)
-
-# --- COLUMN 1: LOCAL NEWS ---
-with col_local:
+col_l, col_i = st.columns(2)
+with col_l:
     st.markdown("### 🇬🇭 Local: Ahanta West & Tarkwa")
     st.info(f"🌦️ **Weather:** Monitoring {today_str} conditions...")
-    
     local_data = get_news_data("(GREL OR Apimanim OR Tarkwa OR Axim) rubber")
-    
     if local_data:
         for entry in local_data:
-            # RESTORED: Showing the full title exactly as fetched
             st.markdown(f"🔗 **[{entry.title}]({entry.link})**")
             st.caption(f"📅 {entry.published[:16]}")
-    else:
-        st.write("Checking local archives...")
 
-# --- COLUMN 2: INTERNATIONAL NEWS ---
-with col_int:
-    st.markdown("### 🌍 Global Market News"
-    
+with col_i:
+    st.markdown("### 🌍 Global Market News")
     global_data = get_news_data("rubber market price global")
-    
     if global_data:
         for entry in global_data:
-            # RESTORED: Showing the full title exactly as fetched
             st.markdown(f"📈 **[{entry.title}]({entry.link})**")
             st.caption(f"Published: {entry.published[:16]}")
-    else:
-        st.write("Connecting to global market feed...")
-        
+
 # --- 11. FOOTER ---
 st.divider()
-st.markdown(f"<p style='text-align: center; color: gray; font-size: 11px;'>BENJI LIMITED| JAC indusries | Serving Ahanta West & Axim | Auto-Updated: {today_str}</p>", unsafe_allow_html=True)
+st.markdown(f"<p style='text-align: center; color: gray; font-size: 11px;'>BENJI LIMITED | Auto-Updated: {today_str}</p>", unsafe_allow_html=True)
