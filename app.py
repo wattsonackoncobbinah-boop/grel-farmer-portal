@@ -196,50 +196,56 @@ tradingview_html = """
 """
 components.html(tradingview_html, height=450)
 
-# --- 10. NEWS DASHBOARD (FAST-LOADING CACHE) ---
+# --- 10. NEWS DASHBOARD (RESTORED ORIGINAL TITLES) ---
 st.divider()
 st.subheader(f"📰 Industry News ({date_range})")
 
-# This function handles BOTH Local and International news instantly
-@st.cache_data(ttl=7200)
-def fetch_news(query):
+@st.cache_data(ttl=3600)
+def get_news_data(search_term):
     try:
-        url = f"https://news.google.com/rss/search?q={query}&hl=en-GH&gl=GH&ceid=GH:en"
-        return feedparser.parse(url).entries
+        url = f"https://news.google.com/rss/search?q={search_term}&hl=en-GH&gl=GH&ceid=GH:en"
+        # 5-second limit ensures the calculator still works if the news is slow
+        response = requests.get(url, timeout=5)
+        feed = feedparser.parse(response.content)
+        return feed.entries[:5]
     except:
         return []
 
-# Universal Refresh Button
+# Refresh Button
 if st.button(f"🔄 Sync All Feeds for {today_str}"):
     st.cache_data.clear()
     st.rerun()
 
 col_local, col_int = st.columns(2)
 
+# --- COLUMN 1: LOCAL NEWS ---
 with col_local:
-    st.markdown("### 🇬🇭 Local Hub: Ahanta West & Axim")
-    st.info(f"🌦️ **Weather Forecast:** Monitoring {today_str} conditions for the Western Region...")
+    st.markdown("### 🇬🇭 Local: Ahanta West & Tarkwa")
+    st.info(f"🌦️ **Weather:** Monitoring {today_str} conditions...")
     
-    # Fast Local Fetch
-    local_news = fetch_news("(GREL OR Apimanim OR Tarkwa OR Axim) rubber Ghana")
-    if local_news:
-        for entry in local_news[:5]:
-            st.markdown(f"🔗 **[{entry.title.split(' - ')[0]}]({entry.link})**")
+    local_data = get_news_data("(GREL OR Apimanim OR Tarkwa OR Axim) rubber")
+    
+    if local_data:
+        for entry in local_data:
+            # RESTORED: Showing the full title exactly as fetched
+            st.markdown(f"🔗 **[{entry.title}]({entry.link})**")
             st.caption(f"📅 {entry.published[:16]}")
     else:
-        st.write("No local reports found in the last 72 hours.")
+        st.write("Checking local archives...")
 
+# --- COLUMN 2: INTERNATIONAL NEWS ---
 with col_int:
-    st.markdown("### 🌍 Global Market Feed")
+    st.markdown("### 🌍 Global Market News"
     
-    # Fast International Fetch (RESTORED)
-    int_news = fetch_news("rubber market price global")
-    if int_news:
-        for entry in int_news[:5]:
-            st.markdown(f"**[{entry.title.split(' - ')[0]}]({entry.link})**")
+    global_data = get_news_data("rubber market price global")
+    
+    if global_data:
+        for entry in global_data:
+            # RESTORED: Showing the full title exactly as fetched
+            st.markdown(f"📈 **[{entry.title}]({entry.link})**")
             st.caption(f"Published: {entry.published[:16]}")
     else:
-        st.write("Global feed currently syncing...")
+        st.write("Connecting to global market feed...")
         
 # --- 11. FOOTER ---
 st.divider()
