@@ -196,37 +196,51 @@ tradingview_html = """
 """
 components.html(tradingview_html, height=450)
 
-# --- 10. NEWS DASHBOARD (CACHED FOR SPEED) ---
+# --- 10. NEWS DASHBOARD (FAST-LOADING CACHE) ---
+st.divider()
+st.subheader(f"📰 Industry News ({date_range})")
 
-# We add this "Decorator" to make it load instantly after the first try
-@st.cache_data(ttl=7200) # ttl=7200 means "Remember this for 2 hours"
-def fetch_local_news(query):
+# This function handles BOTH Local and International news instantly
+@st.cache_data(ttl=7200)
+def fetch_news(query):
     try:
         url = f"https://news.google.com/rss/search?q={query}&hl=en-GH&gl=GH&ceid=GH:en"
         return feedparser.parse(url).entries
     except:
         return []
 
+# Universal Refresh Button
+if st.button(f"🔄 Sync All Feeds for {today_str}"):
+    st.cache_data.clear()
+    st.rerun()
+
 col_local, col_int = st.columns(2)
 
 with col_local:
-    st.markdown("### 🇬🇭 Ahanta West & Axim")
+    st.markdown("### 🇬🇭 Local Hub: Ahanta West & Axim")
+    st.info(f"🌦️ **Weather Forecast:** Monitoring {today_str} conditions for the Western Region...")
     
-    # Static Weather (Loads instantly)
-    # Instead of a live call that takes forever, use a fast info box
-    st.info(f"🌦️ **Today's Forecast:** Typical tropical conditions for Western Region. High 31°C / Low 24°C. Localized showers expected near Axim.")
-
-    st.markdown("#### 🕒 Local Industry Updates")
-    
-    # Calling the cached function (Fast!)
-    local_news = fetch_local_news("(GREL OR Apimanim OR Tarkwa OR Axim) rubber Ghana")
-    
+    # Fast Local Fetch
+    local_news = fetch_news("(GREL OR Apimanim OR Tarkwa OR Axim) rubber Ghana")
     if local_news:
         for entry in local_news[:5]:
             st.markdown(f"🔗 **[{entry.title.split(' - ')[0]}]({entry.link})**")
             st.caption(f"📅 {entry.published[:16]}")
     else:
-        st.write("No recent reports found in the last 72 hours.")
+        st.write("No local reports found in the last 72 hours.")
+
+with col_int:
+    st.markdown("### 🌍 Global Market Feed")
+    
+    # Fast International Fetch (RESTORED)
+    int_news = fetch_news("rubber market price global")
+    if int_news:
+        for entry in int_news[:5]:
+            st.markdown(f"**[{entry.title.split(' - ')[0]}]({entry.link})**")
+            st.caption(f"Published: {entry.published[:16]}")
+    else:
+        st.write("Global feed currently syncing...")
+
 # --- 11. FOOTER ---
 st.divider()
 st.markdown(f"<p style='text-align: center; color: gray; font-size: 11px;'>BENJI LIMITED| JAC indusries | Serving Ahanta West & Axim | Auto-Updated: {today_str}</p>", unsafe_allow_html=True)
