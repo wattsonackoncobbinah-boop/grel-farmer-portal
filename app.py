@@ -96,23 +96,23 @@ def get_news_data(search_term):
 if 'sidebar_color' not in st.session_state:
     st.session_state.sidebar_color = "#DFE8DF"
 
-with st.sidebar:
-    st.image(LOGO_URL, use_container_width=True)
-    st.header("App Settings")
-# --- THEME TOGGLE ---
-st.subheader("🖥️ Display Settings")
-# This creates a simple checkbox for the user
 if 'theme_mode' not in st.session_state:
     st.session_state.theme_mode = "Dark"
 
-toggle_theme = st.toggle("Switch to Light Mode", value=(st.session_state.theme_mode == "Light"))
-st.session_state.theme_mode = "Light" if toggle_theme else "Dark"
+with st.sidebar:
+    st.image(LOGO_URL, use_container_width=True)
     
+    st.subheader("🖥️ Display Settings")
+    toggle_theme = st.toggle("Switch to Light Mode", value=(st.session_state.theme_mode == "Light"))
+    st.session_state.theme_mode = "Light" if toggle_theme else "Dark"
+    
+    st.divider()
+    st.header("App Settings")
     admin_key = st.text_input("🔑 Programmer Key:", type="password")
     
     if admin_key == "yaw2026":
         with st.expander("🎨 Sidebar Theme"):
-            chosen_color = st.color_picker("Choose Sidebar Color", st.session_state.sidebar_color)
+            chosen_color = st.color_picker("Sidebar Color", st.session_state.sidebar_color)
             if st.button("Apply Color"):
                 st.session_state.sidebar_color = chosen_color
                 st.rerun()
@@ -131,55 +131,37 @@ st.session_state.theme_mode = "Light" if toggle_theme else "Dark"
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
-# --- 5. DYNAMIC CSS (MAIN BODY ONLY) ---
+# --- 5. DYNAMIC CSS (FIXED INDENTATION) ---
 if st.session_state.theme_mode == "Dark":
-    bg_overlay = "rgba(0,0,0,0.7)"
-    main_text = "white"
-    metric_color = "white"
-    text_shadow = "2px 2px 4px #000000"
+    bg_overlay, main_text, metric_c, shadow = "rgba(0,0,0,0.7)", "white", "white", "2px 2px 4px #000000"
 else:
-    bg_overlay = "rgba(255,255,255,0.85)"
-    main_text = "#1A1A1A"
-    metric_color = "#2E7D32" # Professional Green for Light Mode
-    text_shadow = "none"
+    bg_overlay, main_text, metric_c, shadow = "rgba(255,255,255,0.85)", "#1A1A1A", "#2E7D32", "none"
 
 st.markdown(f"""
     <style>
-    /* 1. MAIN APP BACKGROUND & TEXT */
     .stApp {{
         background: linear-gradient({bg_overlay}, {bg_overlay}), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
-        background-size: cover; 
-        background-attachment: fixed;
+        background-size: cover; background-attachment: fixed;
     }}
-    
-    /* Target only the main content area for theme changes */
-    [data-testid="stHeader"], .main .block-container h1, .main .block-container h2, 
-    .main .block-container h3, .main .block-container p, .main .block-container span, 
-    .main .block-container label {{ 
-        color: {main_text} !important; 
-        text-shadow: {text_shadow}; 
-    }}
-
-    [data-testid="stMetricLabel"] p, [data-testid="stMetricValue"] {{ 
-        color: {metric_color} !important; 
-    }}
-
-    /* 2. SIDEBAR (FIXED INDEPENDENT COLORS) */
     section[data-testid="stSidebar"] {{ 
         background-color: {st.session_state.sidebar_color} !important; 
     }}
-    
-    /* Force Sidebar text to remain White or Dark regardless of main theme */
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, 
-    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label {{ 
-        color: #333333 !important; /* Fixed dark grey for the light green sidebar */
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label, [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {{ 
+        color: #333333 !important; 
         text-shadow: none !important;
     }}
-
+    .main h1, .main h2, .main h3, .main p, .main span, .main label {{ 
+        color: {main_text} !important; 
+        text-shadow: {shadow}; 
+    }}
+    [data-testid="stMetricLabel"] p, [data-testid="stMetricValue"] {{ 
+        color: {metric_c} !important; 
+    }}
     a {{ color: #0088FF !important; font-weight: 600; }}
     </style>
     """, unsafe_allow_html=True)
+
 # --- 6. CALCULATION ENGINE ---
 def predict_grel_price(global_price, exchange_rate):
     k_factor = 0.365 
