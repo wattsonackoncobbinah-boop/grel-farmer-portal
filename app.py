@@ -240,7 +240,7 @@ with col_int:
             st.caption(f"Published: {entry.published[:16]}")
     else:
         st.write("Global feed currently syncing...")
-
+        
 # --- 11. FOOTER ---
 st.divider()
 st.markdown(f"<p style='text-align: center; color: gray; font-size: 11px;'>BENJI LIMITED| JAC indusries | Serving Ahanta West & Axim | Auto-Updated: {today_str}</p>", unsafe_allow_html=True)
