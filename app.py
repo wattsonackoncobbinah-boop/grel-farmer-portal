@@ -99,6 +99,15 @@ if 'sidebar_color' not in st.session_state:
 with st.sidebar:
     st.image(LOGO_URL, use_container_width=True)
     st.header("App Settings")
+# --- THEME TOGGLE ---
+st.subheader("🖥️ Display Settings")
+# This creates a simple checkbox for the user
+if 'theme_mode' not in st.session_state:
+    st.session_state.theme_mode = "Dark"
+
+toggle_theme = st.toggle("Switch to Light Mode", value=(st.session_state.theme_mode == "Light"))
+st.session_state.theme_mode = "Light" if toggle_theme else "Dark"
+    
     admin_key = st.text_input("🔑 Programmer Key:", type="password")
     
     if admin_key == "yaw2026":
