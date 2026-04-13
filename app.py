@@ -131,21 +131,55 @@ st.session_state.theme_mode = "Light" if toggle_theme else "Dark"
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
-# --- 5. THE MAIN CSS ---
+# --- 5. DYNAMIC CSS (MAIN BODY ONLY) ---
+if st.session_state.theme_mode == "Dark":
+    bg_overlay = "rgba(0,0,0,0.7)"
+    main_text = "white"
+    metric_color = "white"
+    text_shadow = "2px 2px 4px #000000"
+else:
+    bg_overlay = "rgba(255,255,255,0.85)"
+    main_text = "#1A1A1A"
+    metric_color = "#2E7D32" # Professional Green for Light Mode
+    text_shadow = "none"
+
 st.markdown(f"""
     <style>
+    /* 1. MAIN APP BACKGROUND & TEXT */
     .stApp {{
-        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+        background: linear-gradient({bg_overlay}, {bg_overlay}), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
-        background-size: cover; background-attachment: fixed;
+        background-size: cover; 
+        background-attachment: fixed;
     }}
-    section[data-testid="stSidebar"] {{ background-color: {st.session_state.sidebar_color} !important; }}
-    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label {{ color: white !important; }}
-    h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {{ color: white !important; text-shadow: 2px 2px 4px #000000; }}
-    a {{ color: #00FF88 !important; font-weight: 600; text-decoration: none; }}
+    
+    /* Target only the main content area for theme changes */
+    [data-testid="stHeader"], .main .block-container h1, .main .block-container h2, 
+    .main .block-container h3, .main .block-container p, .main .block-container span, 
+    .main .block-container label {{ 
+        color: {main_text} !important; 
+        text-shadow: {text_shadow}; 
+    }}
+
+    [data-testid="stMetricLabel"] p, [data-testid="stMetricValue"] {{ 
+        color: {metric_color} !important; 
+    }}
+
+    /* 2. SIDEBAR (FIXED INDEPENDENT COLORS) */
+    section[data-testid="stSidebar"] {{ 
+        background-color: {st.session_state.sidebar_color} !important; 
+    }}
+    
+    /* Force Sidebar text to remain White or Dark regardless of main theme */
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, 
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label {{ 
+        color: #333333 !important; /* Fixed dark grey for the light green sidebar */
+        text-shadow: none !important;
+    }}
+
+    a {{ color: #0088FF !important; font-weight: 600; }}
     </style>
     """, unsafe_allow_html=True)
-
 # --- 6. CALCULATION ENGINE ---
 def predict_grel_price(global_price, exchange_rate):
     k_factor = 0.365 
