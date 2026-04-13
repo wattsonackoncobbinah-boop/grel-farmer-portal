@@ -131,21 +131,21 @@ with st.sidebar:
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
-# --- 5. DYNAMIC CSS (FIXED VISIBILITY) ---
+# --- 5. DYNAMIC CSS (TOTAL VISIBILITY FIX) ---
 if st.session_state.theme_mode == "Dark":
-    bg_overlay = "rgba(0,0,0,0.7)"
-    main_text = "#FFFFFF"  # Pure White
+    bg_overlay = "rgba(0,0,0,0.75)" # Slightly darker for better contrast
+    main_text = "#FFFFFF"           # Pure white
     metric_c = "#FFFFFF"
     shadow = "2px 2px 4px #000000"
 else:
     bg_overlay = "rgba(255,255,255,0.85)"
-    main_text = "#1A1A1A"  # Near Black
-    metric_c = "#2E7D32"  # Dark Green
+    main_text = "#1A1A1A"           # Near black
+    metric_c = "#2E7D32"           # Dark green
     shadow = "none"
 
 st.markdown(f"""
     <style>
-    /* 1. BACKGROUND */
+    /* 1. MAIN BACKGROUND */
     .stApp {{
         background: linear-gradient({bg_overlay}, {bg_overlay}), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
@@ -153,30 +153,36 @@ st.markdown(f"""
         background-attachment: fixed;
     }}
 
-    /* 2. FIXING TITLE & HEADER VISIBILITY */
-    /* This targets the Title (h1) and the Live Status (h3) directly */
-    .main h1, .main h2, .main h3, .main p, .main li, .main label, .main span {{ 
+    /* 2. FORCE MAIN TEXT COLORS */
+    /* We target the main container specifically so it doesn't mess with the sidebar */
+    .main [data-testid="stVerticalBlock"] div, 
+    .main [data-testid="stVerticalBlock"] span, 
+    .main [data-testid="stVerticalBlock"] p, 
+    .main [data-testid="stVerticalBlock"] label,
+    .main h1, .main h2, .main h3 {{ 
         color: {main_text} !important; 
         text-shadow: {shadow} !important;
     }}
 
-    /* 3. METRICS */
+    /* 3. METRICS (The big numbers) */
     [data-testid="stMetricLabel"] p, [data-testid="stMetricValue"] {{ 
         color: {metric_c} !important; 
         text-shadow: {shadow} !important;
     }}
 
-    /* 4. SIDEBAR (STAYS READABLE) */
+    /* 4. SIDEBAR (LOCKED TO DARK TEXT FOR CONTRAST) */
     section[data-testid="stSidebar"] {{ 
         background-color: {st.session_state.sidebar_color} !important; 
     }}
-    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label, 
+    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] p, 
+    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] span, 
+    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] label,
     [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {{ 
         color: #333333 !important; 
         text-shadow: none !important;
     }}
 
-    /* 5. LINKS */
+    /* 5. HYPERLINKS */
     a {{ color: #00FF88 !important; font-weight: 600; }}
     </style>
     """, unsafe_allow_html=True)
