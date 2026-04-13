@@ -131,21 +131,23 @@ with st.sidebar:
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
-# --- 5. DYNAMIC CSS (TOTAL VISIBILITY FIX) ---
+# --- 5. DYNAMIC CSS (ROOT VARIABLE FIX) ---
 if st.session_state.theme_mode == "Dark":
-    bg_overlay = "rgba(0,0,0,0.75)" # Slightly darker for better contrast
-    main_text = "#FFFFFF"           # Pure white
-    metric_c = "#FFFFFF"
+    bg_overlay = "rgba(0,0,0,0.75)"
+    text_color = "#FFFFFF"  # Global White
     shadow = "2px 2px 4px #000000"
 else:
     bg_overlay = "rgba(255,255,255,0.85)"
-    main_text = "#1A1A1A"           # Near black
-    metric_c = "#2E7D32"           # Dark green
+    text_color = "#1A1A1A"  # Global Dark
     shadow = "none"
 
 st.markdown(f"""
     <style>
-    /* 1. MAIN BACKGROUND */
+    /* This targets the base variables for the whole app */
+    :root {{
+        --primary-text-color: {text_color};
+    }}
+
     .stApp {{
         background: linear-gradient({bg_overlay}, {bg_overlay}), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
@@ -153,36 +155,32 @@ st.markdown(f"""
         background-attachment: fixed;
     }}
 
-    /* 2. FORCE MAIN TEXT COLORS */
-    /* We target the main container specifically so it doesn't mess with the sidebar */
-    .main [data-testid="stVerticalBlock"] div, 
-    .main [data-testid="stVerticalBlock"] span, 
-    .main [data-testid="stVerticalBlock"] p, 
-    .main [data-testid="stVerticalBlock"] label,
-    .main h1, .main h2, .main h3 {{ 
-        color: {main_text} !important; 
+    /* Force EVERYTHING in the main area to inherit the text color */
+    .main * {{
+        color: {text_color} !important;
+    }}
+
+    /* Add the shadow specifically for Dark Mode visibility */
+    .main h1, .main h2, .main h3, .main p, .main label {{
         text-shadow: {shadow} !important;
     }}
 
-    /* 3. METRICS (The big numbers) */
-    [data-testid="stMetricLabel"] p, [data-testid="stMetricValue"] {{ 
-        color: {metric_c} !important; 
-        text-shadow: {shadow} !important;
+    /* Target metrics specifically because they use different logic */
+    [data-testid="stMetricValue"], [data-testid="stMetricLabel"] p {{
+        color: {text_color} !important;
     }}
 
-    /* 4. SIDEBAR (LOCKED TO DARK TEXT FOR CONTRAST) */
-    section[data-testid="stSidebar"] {{ 
-        background-color: {st.session_state.sidebar_color} !important; 
-    }}
-    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] p, 
-    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] span, 
-    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] label,
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {{ 
-        color: #333333 !important; 
+    /* LOCK SIDEBAR TEXT (Independent of Theme) */
+    [data-testid="stSidebar"] * {{
+        color: #333333 !important;
         text-shadow: none !important;
     }}
 
-    /* 5. HYPERLINKS */
+    /* Keep Sidebar background stable */
+    section[data-testid="stSidebar"] {{ 
+        background-color: {st.session_state.sidebar_color} !important; 
+    }}
+
     a {{ color: #00FF88 !important; font-weight: 600; }}
     </style>
     """, unsafe_allow_html=True)
