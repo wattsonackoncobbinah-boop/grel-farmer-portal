@@ -19,11 +19,13 @@ date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
 
-# --- 2.5 WELCOME SPLASH SCREEN (LOGO COLOR MATCHED) ---
+# --- 2.5 WELCOME SPLASH SCREEN (LOGO FIXED) ---
 if 'welcome_done' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
-        # Matching the Marble/Cream background of your logo
+        # Using the Direct Raw GitHub URL
+        RAW_LOGO = "https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png"
+        
         st.markdown(f"""
             <style>
             .stApp {{
@@ -35,7 +37,7 @@ if 'welcome_done' not in st.session_state:
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                height: 80vh;
+                height: 60vh; /* Adjusted for better centering with logo */
                 text-align: center;
             }}
             .welcome-text {{
@@ -47,20 +49,24 @@ if 'welcome_done' not in st.session_state:
             }}
             </style>
             <div class="welcome-container">
-                <img src="https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png" width="250">
-                <div class="welcome-text">BENJI GREL FARMER PORTAL</div>
-                <p style="color: #555; font-size: 20px;">Initializing Secure Connection...</p>
-            </div>
+                </div>
         """, unsafe_allow_html=True)
         
-        # The Progress Bar (The "Speed" Control)
+        # Displaying logo using Streamlit's native image function for reliability
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image(RAW_LOGO, width=250)
+            st.markdown("<div style='text-align: center;' class='welcome-text'>BENJI GREL FARMER PORTAL</div>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center; color: #555; font-size: 20px;'>Initializing Secure Connection...</p>", unsafe_allow_html=True)
+        
+        # The Progress Bar (Speed: 0.04)
         bar = st.progress(0)
         for i in range(100):
-            time.sleep(0.07) # <--- INCREASE this (0.07) to make it even slower
+            time.sleep(0.04) 
             bar.progress(i + 1)
             
         st.success("✅ System Ready")
-        time.sleep(1.5) # A brief pause so they can see the success message
+        time.sleep(1.2) 
     
     placeholder.empty()
     st.session_state.welcome_done = True
