@@ -131,57 +131,45 @@ with st.sidebar:
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
-# --- 5. DYNAMIC CSS (ROOT VARIABLE FIX) ---
+# --- 5. DYNAMIC CSS (FORCED CONTRAST) ---
 if st.session_state.theme_mode == "Dark":
-    bg_overlay = "rgba(0,0,0,0.75)"
-    text_color = "#FFFFFF"  # Global White
+    bg_overlay = "rgba(0,0,0,0.8)"  # Darker for better visibility
+    text_color = "#FFFFFF"         # Pure White
     shadow = "2px 2px 4px #000000"
 else:
     bg_overlay = "rgba(255,255,255,0.85)"
-    text_color = "#1A1A1A"  # Global Dark
+    text_color = "#000000"         # Pure Black
     shadow = "none"
 
 st.markdown(f"""
     <style>
-    /* This targets the base variables for the whole app */
-    :root {{
-        --primary-text-color: {text_color};
-    }}
-
+    /* Force the main background */
     .stApp {{
         background: linear-gradient({bg_overlay}, {bg_overlay}), 
-                    url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
-        background-size: cover; 
-        background-attachment: fixed;
+                    url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg") !important;
+        background-size: cover !important; 
+        background-attachment: fixed !important;
     }}
 
-    /* Force EVERYTHING in the main area to inherit the text color */
-    .main * {{
+    /* THE MAGIC FIX: This forces everything inside the 'main' class */
+    .main .stMarkdown, .main .stText, .main h1, .main h2, .main h3, .main p, .main label {{
         color: {text_color} !important;
-    }}
-
-    /* Add the shadow specifically for Dark Mode visibility */
-    .main h1, .main h2, .main h3, .main p, .main label {{
         text-shadow: {shadow} !important;
     }}
 
-    /* Target metrics specifically because they use different logic */
+    /* Fix the Metric Values specifically */
     [data-testid="stMetricValue"], [data-testid="stMetricLabel"] p {{
         color: {text_color} !important;
     }}
 
-    /* LOCK SIDEBAR TEXT (Independent of Theme) */
+    /* Sidebar Protection: Keep it Dark Text regardless of theme */
+    [data-testid="stSidebar"] {{
+        background-color: {st.session_state.sidebar_color} !important;
+    }}
     [data-testid="stSidebar"] * {{
-        color: #333333 !important;
+        color: #1A1A1A !important;
         text-shadow: none !important;
     }}
-
-    /* Keep Sidebar background stable */
-    section[data-testid="stSidebar"] {{ 
-        background-color: {st.session_state.sidebar_color} !important; 
-    }}
-
-    a {{ color: #00FF88 !important; font-weight: 600; }}
     </style>
     """, unsafe_allow_html=True)
 
