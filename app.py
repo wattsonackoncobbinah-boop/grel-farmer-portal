@@ -19,6 +19,52 @@ date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
 
+# --- 2.5 WELCOME SPLASH SCREEN (LOGO COLOR MATCHED) ---
+if 'welcome_done' not in st.session_state:
+    placeholder = st.empty()
+    with placeholder.container():
+        # Matching the Marble/Cream background of your logo
+        st.markdown(f"""
+            <style>
+            .stApp {{
+                background-color: #F2EDE4 !important;
+                background-image: none !important;
+            }}
+            .welcome-container {{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 80vh;
+                text-align: center;
+            }}
+            .welcome-text {{
+                color: #000000 !important;
+                font-size: 45px !important;
+                font-weight: 800 !important;
+                margin-top: 20px;
+                text-shadow: none !important;
+            }}
+            </style>
+            <div class="welcome-container">
+                <img src="https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png" width="250">
+                <div class="welcome-text">BENJI GREL FARMER PORTAL</div>
+                <p style="color: #555; font-size: 20px;">Initializing Secure Connection...</p>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # The Progress Bar (The "Speed" Control)
+        bar = st.progress(0)
+        for i in range(100):
+            time.sleep(0.07) # <--- INCREASE this (0.07) to make it even slower
+            bar.progress(i + 1)
+            
+        st.success("✅ System Ready")
+        time.sleep(1.5) # A brief pause so they can see the success message
+    
+    placeholder.empty()
+    st.session_state.welcome_done = True
+
 # --- 3. AUTOMATION FUNCTIONS ---
 def get_live_exchange_rate():
     try:
