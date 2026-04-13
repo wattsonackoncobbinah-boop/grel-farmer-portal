@@ -3,16 +3,15 @@ import streamlit.components.v1 as components
 import requests
 from streamlit_lottie import st_lottie
 import time
-import datetime # Added for automation
+import datetime
 import calendar
 import feedparser
 from bs4 import BeautifulSoup
 import re
 
-# --- 1. DYNAMIC DATE CALCULATIONS (NEW) ---
+# --- 1. DYNAMIC DATE CALCULATIONS ---
 now = datetime.datetime.now()
 today_str = now.strftime("%B %d, %Y")
-# Calculate the date 2 days ago for the news window
 two_days_ago = now - datetime.timedelta(days=2)
 date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 
@@ -71,43 +70,30 @@ with st.sidebar:
         tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
         current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
 
-# --- 5. THE CSS (STRICT SIDEBAR ISOLATION) ---
+# --- 5. THE CSS (RESTORED DARK THEME) ---
 st.markdown(f"""
     <style>
-    /* 1. Main App Background */
     .stApp {{
         background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
                     url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/dad.jpg");
         background-size: cover; 
         background-attachment: fixed;
     }}
-
-    /* 2. Sidebar Color Logic */
     section[data-testid="stSidebar"] {{
         background-color: {st.session_state.sidebar_color} !important;
     }}
-
     section[data-testid="stSidebar"] > div {{
         background-color: {st.session_state.sidebar_color} !important;
         background-image: none !important;
     }}
-
-    /* 3. Text Visibility */
     [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label {{
         color: white !important;
     }}
-
     h1, h2, h3, p, span, label, .stMetric, [data-testid="stMetricValue"] {{
         color: white !important; 
         text-shadow: 2px 2px 4px #000000;
     }}
-
-    /* News Links */
-    a {{
-        color: #00FF88 !important; 
-        font-weight: 600;
-        text-decoration: none;
-    }}
+    a {{ color: #00FF88 !important; font-weight: 600; text-decoration: none; }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -119,15 +105,15 @@ def predict_grel_price(global_price, exchange_rate):
 
 prediction_dry = predict_grel_price(1.76, usd_to_ghs)
 
-# --- 7. MAIN CONTENT & METRICS ---
+# --- 7. MAIN CONTENT ---
 st.title("🚜 BENJI GREL FARMER'S PORTAL")
-st.write(f"### Market Status: {today_str}")
+st.write(f"### Live Status: {today_str}")
 
 col_photo, col_metrics = st.columns([1, 2])
 with col_photo:
     st.image("dad.jpg", width=300, caption="Portal Administrator")
 with col_metrics:
-    st.write("### Today's Market Summary")
+    st.write("### Market Summary")
     m1, m2, m3 = st.columns(3)
     m1.metric("Exchange Rate", f"₵{usd_to_ghs}")
     m2.metric("GREL Gate Price", f"₵{current_grel_gate_price}")
@@ -135,12 +121,12 @@ with col_metrics:
 
 # --- 8. PAYOUT CALCULATOR ---
 st.divider()
-st.subheader("💰 Farmer's Payout Calculator (Wet Weight)")
+st.subheader("💰 Payout Calculator")
 c1, c2, c3 = st.columns(3)
 with c1:
-    wet_kg = st.number_input("Enter Total Wet Weight (kg):", value=1000, step=100)
+    wet_kg = st.number_input("Total Wet Weight (kg):", value=1000, step=100)
 with c2:
-    drc_val = st.slider("Select DRC % (from GREL Lab):", 40, 65, 52)
+    drc_val = st.slider("Select DRC %:", 40, 65, 52)
 with c3:
     deduct_loan = st.checkbox("Apply 25% Loan Deduction", value=True)
 
@@ -152,59 +138,50 @@ st.write("---")
 res1, res2, res3 = st.columns(3)
 res1.metric("Predicted Dry Price", f"₵{prediction_dry}/kg")
 res2.metric("Your Wet Price", f"₵{wet_price}/kg")
-res3.metric("Estimated Take-Home", f"₵{net_total:,}")
+res3.metric("Take-Home", f"₵{net_total:,}")
 
-# --- 9. NEWS DASHBOARD (FULLY AUTOMATED) ---
+# --- 9. THE CHART (RESTORED) ---
+st.subheader("📈 Live Global Rubber Market")
+tradingview_html = """
+<div style="height:450px; width:100%;"><div id="tv" style="height:100%;"></div>
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>new TradingView.widget({"autosize":true,"symbol":"SGX:TF1!","interval":"D","theme":"dark","container_id":"tv"});</script></div>
+"""
+components.html(tradingview_html, height=450)
+
+# --- 10. NEWS DASHBOARD ---
 st.divider()
-st.subheader(f"📰 Regional Industry News ({date_range})")
+st.subheader(f"📰 Industry News ({date_range})")
 
-# Universal Refresh
-if st.button(f"🔄 Sync Latest Data for {today_str}"):
+if st.button(f"🔄 Sync Data for {today_str}"):
     st.cache_data.clear()
     st.rerun()
 
 col_local, col_int = st.columns(2)
-
 with col_local:
-    st.markdown("### 🇬🇭 Local Hub: Ahanta West & Axim")
+    st.markdown("### 🇬🇭 Ahanta West & Axim")
+    st.info(f"🌦️ **Weather Forecast:** Monitoring {today_str} conditions...")
     
-    # Automated Weather Text
-    st.info(f"🌦️ **Forecast for {today_str}:** Sunny morning; afternoon thunderstorms likely in Ahanta West and Axim areas.")
-
-    # Automated Area Alerts
-    st.markdown(f"""
-        <div style="background-color: rgba(255,0,0,0.1); padding: 10px; border-radius: 8px; border-left: 5px solid #ff4b4b; margin-bottom: 10px;">
-            <p style="margin:0; font-size:12px; color: #ff4b4b;"><strong>REAL-TIME STATUS: {today_str}</strong></p>
-            <p style="color: white; margin: 5px 0; font-size: 14px;">
-                Monitoring GREL outgrower security and TCDA pricing updates for the 72-hour period starting {two_days_ago.strftime('%b %d')}.
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Automated News Feed
     try:
         local_query = "(GREL OR Apimanim OR Tarkwa OR Axim) rubber Ghana"
         url = f"https://news.google.com/rss/search?q={local_query}&hl=en-GH&gl=GH&ceid=GH:en"
         feed = feedparser.parse(url)
-        
-        if feed.entries:
-            for entry in feed.entries[:5]:
-                st.markdown(f"🔗 **[{entry.title.split(' - ')[0]}]({entry.link})**")
-                st.caption(f"📅 {entry.published[:16]}")
+        for entry in feed.entries[:5]:
+            st.markdown(f"🔗 **[{entry.title.split(' - ')[0]}]({entry.link})**")
+            st.caption(f"📅 {entry.published[:16]}")
     except:
-        st.error("Local feed is updating...")
+        st.write("Loading local news...")
 
 with col_int:
-    st.markdown("### 🌍 Global Market Feed")
+    st.markdown("### 🌍 Global Feed")
     try:
         news_url = "https://news.google.com/rss/search?q=rubber+market+price+global&hl=en-GH&gl=GH&ceid=GH:en"
         feed = feedparser.parse(news_url)
         for entry in feed.entries[:5]:
             st.markdown(f"**[{entry.title.split(' - ')[0]}]({entry.link})**")
-            st.caption(f"Published: {entry.published[:16]}")
     except:
-        st.error("Global feed syncing...")
+        st.write("Loading global data...")
 
-# --- 10. FOOTER ---
+# --- 11. FOOTER ---
 st.divider()
-st.markdown(f"<p style='text-align: center; color: gray; font-size: 11px;'>BENJI LIMITED | Serving Ahanta West & Axim | Live System Date: {today_str}</p>", unsafe_allow_html=True)
+st.markdown(f"<p style='text-align: center; color: gray; font-size: 11px;'>BENJI LIMITED | Serving Ahanta West & Axim | Auto-Updated: {today_str}</p>", unsafe_allow_html=True)
