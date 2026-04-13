@@ -18,56 +18,51 @@ date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 # --- 2. CONFIG & LOGO SETUP ---
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
-
-# --- 2.5 WELCOME SPLASH SCREEN (LOGO FIXED) ---
+# --- 2.5 WELCOME SPLASH SCREEN (BULLETPROOF VERSION) ---
 if 'welcome_done' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
-        # Using the Direct Raw GitHub URL
-        RAW_LOGO = "https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png"
-        
-        st.markdown(f"""
+        # Using CSS to force the clean cream background
+        st.markdown("""
             <style>
-            .stApp {{
+            .stApp {
                 background-color: #F2EDE4 !important;
                 background-image: none !important;
-            }}
-            .welcome-container {{
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 60vh; /* Adjusted for better centering with logo */
-                text-align: center;
-            }}
-            .welcome-text {{
+            }
+            .welcome-title {
                 color: #000000 !important;
-                font-size: 45px !important;
+                font-size: 40px !important;
                 font-weight: 800 !important;
-                margin-top: 20px;
+                text-align: center;
+                margin-top: 10px;
                 text-shadow: none !important;
-            }}
+            }
             </style>
-            <div class="welcome-container">
-                </div>
         """, unsafe_allow_html=True)
         
-        # Displaying logo using Streamlit's native image function for reliability
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            st.image(RAW_LOGO, width=250)
-            st.markdown("<div style='text-align: center;' class='welcome-text'>BENJI GREL FARMER PORTAL</div>", unsafe_allow_html=True)
-            st.markdown("<p style='text-align: center; color: #555; font-size: 20px;'>Initializing Secure Connection...</p>", unsafe_allow_html=True)
-        
-        # The Progress Bar (Speed: 0.04)
-        bar = st.progress(0)
-        for i in range(100):
-            time.sleep(0.04) 
-            bar.progress(i + 1)
+        # Using 3 columns to center everything perfectly
+        left, mid, right = st.columns([1, 2, 1])
+        with mid:
+            st.write("##") # Add some spacing at the top
+            # 1. LOCAL FILE: We use the same logo.png used in your sidebar
+            try:
+                st.image("logo.png", width=250)
+            except:
+                # 2. BACKUP URL: If local fails, try the GitHub link
+                st.image("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/logo.png", width=250)
             
-        st.success("✅ System Ready")
-        time.sleep(1.2) 
-    
+            st.markdown('<div class="welcome-title">BENJI GREL FARMER PORTAL</div>', unsafe_allow_html=True)
+            st.write("<p style='text-align: center; color: #444; font-size: 18px;'>Connecting Ghana's Rubber Community...</p>", unsafe_allow_html=True)
+            
+            # The Progress Bar
+            bar = st.progress(0)
+            for i in range(100):
+                time.sleep(0.05) # <--- SLOWED DOWN slightly for your dad to read
+                bar.progress(i + 1)
+            
+            st.success("✅ System Secure & Ready")
+            time.sleep(1.2)
+            
     placeholder.empty()
     st.session_state.welcome_done = True
 
