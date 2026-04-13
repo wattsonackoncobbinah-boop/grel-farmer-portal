@@ -182,8 +182,10 @@ def predict_grel_price(global_price, exchange_rate):
 prediction_dry = predict_grel_price(1.76, usd_to_ghs)
 
 # --- 7. MAIN CONTENT ---
-st.title("🚜 BENJI GREL FARMER'S PORTAL")
-st.write(f"### Live Status: {today_str}")
+# --- 7. MAIN CONTENT (THEME-AWARE TITLES) ---
+# Use this instead of st.title to guarantee the color changes
+st.markdown(f"<h1 style='color:{text_color}; text-shadow:{shadow};'>🚜 BENJI GREL FARMER'S PORTAL</h1>", unsafe_allow_html=True)
+st.markdown(f"<h3 style='color:{text_color}; text-shadow:{shadow};'>Live Status: {today_str}</h3>", unsafe_allow_html=True)
 
 col_p, col_m = st.columns([1, 2])
 with col_p:
