@@ -150,6 +150,11 @@ st.markdown(f"""
         background-size: cover !important; 
         background-attachment: fixed !important;
     }}
+    /* Add this inside the <style> tag in Section 5 */
+.stMarkdown p, .stMarkdown span, .stMarkdown li, label[data-testid="stWidgetLabel"] p {
+    color: {text_color} !important;
+    text-shadow: {shadow} !important;
+}
 
     /* THE MAGIC FIX: This forces everything inside the 'main' class */
     .main .stMarkdown, .main .stText, .main h1, .main h2, .main h3, .main p, .main label {{
@@ -191,20 +196,26 @@ col_p, col_m = st.columns([1, 2])
 with col_p:
     st.image("dad.jpg", width=300, caption="Portal Administrator")
 with col_m:
-    st.write("### Market Summary")
+    st.markdown(f"<h3 style='color:{text_color}; text-shadow:{shadow};'>Market Summary</h3>", unsafe_allow_html=True)
     m1, m2, m3 = st.columns(3)
+    
+    # We use st.metric, but the CSS in Section 5 will now catch these specifically
     m1.metric("Exchange Rate", f"₵{usd_to_ghs}")
     m2.metric("GREL Gate Price", f"₵{current_grel_gate_price}")
     m3.metric("TCDA Floor", f"₵{tcda_min_price}")
-
+    
 # --- 8. PAYOUT CALCULATOR ---
 st.divider()
-st.subheader("💰 Payout Calculator")
+st.markdown(f"<h2 style='color:{text_color}; text-shadow:{shadow};'>💰 Payout Calculator</h2>", unsafe_allow_html=True)
+
 c1, c2, c3 = st.columns(3)
 with c1:
-    wet_kg = st.number_input("Total Wet Weight (kg):", value=1000, step=100)
+    # Form labels are hard to change, so we use markdown above them
+    st.markdown(f"<span style='color:{text_color};'>Total Wet Weight (kg):</span>", unsafe_allow_html=True)
+    wet_kg = st.number_input("", value=1000, step=100, label_visibility="collapsed")
 with c2:
-    drc_val = st.slider("Select DRC %:", 40, 65, 52)
+    st.markdown(f"<span style='color:{text_color};'>Select DRC %:</span>", unsafe_allow_html=True)
+    drc_val = st.slider("", 40, 65, 52, label_visibility="collapsed")
 with c3:
     deduct_loan = st.checkbox("Apply 25% Loan Deduction", value=True)
 
@@ -236,13 +247,16 @@ if st.button(f"🔄 Sync Feeds for {today_str}"):
 
 col_l, col_i = st.columns(2)
 with col_l:
-    st.markdown("### 🇬🇭 Local: Ahanta West & Tarkwa")
-    st.info(f"🌦️ **Weather:** Monitoring {today_str} conditions...")
+    st.markdown(f"<h3 style='color:{text_color};'>🇬🇭 Local: Ahanta West & Tarkwa</h3>", unsafe_allow_html=True)
+    # The 'st.info' box usually stays blue/white, which is fine for readability
+    st.info(f"🌦️ Weather: Monitoring {today_str} conditions...")
+    
     local_data = get_news_data("(GREL OR Apimanim OR Tarkwa OR Axim) rubber")
     if local_data:
         for entry in local_data:
-            st.markdown(f"🔗 **[{entry.title}]({entry.link})**")
-            st.caption(f"📅 {entry.published[:16]}")
+            # We use 00FF88 for links so they glow in the dark!
+            st.markdown(f"🔗 <a href='{entry.link}' style='color:#00FF88; font-weight:bold;'>{entry.title}</a>", unsafe_allow_html=True)
+            st.markdown(f"<p style='color:{text_color}; font-size:12px; margin-top:-15px;'>📅 {entry.published[:16]}</p>", unsafe_allow_html=True)
 
 with col_i:
     st.markdown("### 🌍 Global Market News")
