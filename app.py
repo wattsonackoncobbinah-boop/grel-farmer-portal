@@ -39,6 +39,95 @@ if 'welcome_done' not in st.session_state:
             time.sleep(0.5)
     placeholder.empty()
     st.session_state.welcome_done = True
+    
+# --- 2.5 WELCOME SPLASH SCREEN (IMMERSIVE FULLSCREEN EDITION) ---
+if 'welcome_done' not in st.session_state:
+    placeholder = st.empty()
+    with placeholder.container():
+        # Using columns to create vertical centering
+        _, content_col, _ = st.columns([1, 4, 1])
+        
+        with content_col:
+            st.markdown(f"""
+                <style>
+                /* 🔥 The core fix: Make the existing image full-screen! */
+                .stApp {{
+                    background: url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/Logo.png.png") no-color;
+                    background-size: cover !important;
+                    background-position: center !important;
+                    background-attachment: fixed !important;
+                    background-repeat: no-repeat !important;
+                }}
+                /* 🚀 Hide all the standard Streamlit interface elements so only the logo is seen */
+                header[data-testid="stHeader"] {{
+                    visibility: hidden;
+                }}
+                [data-testid="stSidebarNav"] {{
+                    display: none;
+                }}
+                .welcome-container {{
+                    height: 100vh;
+                    width: 100vw;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                }}
+                /* 🌟 Styling the text on top of the image */
+                .welcome-title {{ 
+                    color: #FFFFFF !important; /* Gold text to match your logo */
+                    font-size: 38px !important; 
+                    font-weight: 800; 
+                    letter-spacing: 2px;
+                    margin-top: 20px;
+                    text-shadow: 2px 2px 8px rgba(0,0,0,0.7); /* Deep shadow to make it stand out against the blurred leaves */
+                }}
+                .welcome-subtitle {{
+                    color: #FFFFFF !important;
+                    font-size: 16px;
+                    opacity: 0.9;
+                    margin-bottom: 30px;
+                    text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+                }}
+                /* Custom styling for the progress bar to give it a tech feel */
+                .stProgress > div > div > div > div {{
+                    background-color: #C9B037 !important; /* Forest Green from your logo */
+                    filter: drop-shadow(0px 0px 4px rgba(25, 125, 25, 0.5));
+                }}
+                </style>
+                <div class="welcome-container">
+                    <div style="margin-top: 100px;">
+                        <div class="welcome-title">BENJI GREL PORTAL</div>
+                        <div class="welcome-subtitle">Optimizing Rubber Farming for the Western Region</div>
+                        
+                        <div style="width: 300px; margin-left: auto; margin-right: auto;">
+                            <div id="progress_bar_wrapper"></div>
+                            <div id="status_text_wrapper" style="color:white; opacity:0.8; font-size: 14px; margin-top: 10px;">Ready to Go.</div>
+                        }
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            # Progress bar animation (Need to use st.progress inside the loop)
+            # Find the div from the CSS and link it. This is tricky but possible.
+            # Using the existing st.progress is the most reliable.
+            
+            # Use the existing progress bar method, it's safer.
+            bar = st.progress(0)
+            status_text = st.empty()
+            for i in range(100):
+                time.sleep(0.01) # Rapid load since this is a fullscreen image
+                bar.progress(i + 1)
+                # Link the status text updates to the progress
+                if i == 20: status_text.markdown("<p style='color:white; opacity:0.8; font-size: 14px; text-align:center;'>Fetching Live Prices...</p>", unsafe_allow_html=True)
+                if i == 50: status_text.markdown("<p style='color:white; opacity:0.8; font-size: 14px; text-align:center;'>Syncing Global Markets...</p>", unsafe_allow_html=True)
+                if i == 80: status_text.markdown("<p style='color:white; opacity:0.8; font-size: 14px; text-align:center;'>Almost There.</p>", unsafe_allow_html=True)
+            
+            time.sleep(1.0) # Give them an extra second to appreciate the fullscreen view
+            
+    placeholder.empty()
+    st.session_state.welcome_done = True
 
 # --- 3. AUTOMATION FUNCTIONS ---
 def get_live_exchange_rate():
