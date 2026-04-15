@@ -62,7 +62,6 @@ if 'welcome_done' not in st.session_state:
                 <div class="full-splash"></div>
             """, unsafe_allow_html=True)
             
-            # This line is now correctly indented
             time.sleep(6.0)
             
     except Exception as e:
@@ -70,8 +69,6 @@ if 'welcome_done' not in st.session_state:
 
     placeholder.empty()
     st.session_state.welcome_done = True
-
-
 
 # --- 3. AUTOMATION FUNCTIONS ---
 def get_live_exchange_rate():
@@ -98,15 +95,19 @@ def get_news_data(search_term):
         return feed.entries[:5]
     except: return []
 
-# --- 4. SESSION STATE & SIDEBAR ---
+# --- 4. SESSION STATE & SIDEBAR (UPDATED FOR LIGHT DEFAULT) ---
 if 'sidebar_color' not in st.session_state: st.session_state.sidebar_color = "#DFE8DF"
-if 'theme_mode' not in st.session_state: st.session_state.theme_mode = "Dark"
+# DEFAULT THEME IS NOW LIGHT
+if 'theme_mode' not in st.session_state: st.session_state.theme_mode = "Light"
 
 with st.sidebar:
     st.image(LOGO_URL, use_container_width=True)
     st.subheader("🖥️ Display Settings")
-    toggle_theme = st.toggle("Switch to Light Mode", value=(st.session_state.theme_mode == "Light"))
-    st.session_state.theme_mode = "Light" if toggle_theme else "Dark"
+    
+    # Toggle defaults to True (Light)
+    toggle_theme = st.toggle("Enable Dark Mode", value=(st.session_state.theme_mode == "Dark"))
+    st.session_state.theme_mode = "Dark" if toggle_theme else "Light"
+    
     st.divider()
     admin_key = st.text_input("🔑 Programmer Key:", type="password")
     if admin_key == "yaw2026":
@@ -129,10 +130,11 @@ with st.sidebar:
         tcda_min_price = 9.11
         current_grel_gate_price = 8.30
 
-# --- 5. DYNAMIC CSS (FINAL BOSS VERSION) ---
+# --- 5. DYNAMIC CSS ---
 if st.session_state.theme_mode == "Dark":
     bg_overlay, text_color, metric_c, shadow = "rgba(0,0,0,0.8)", "#FFFFFF", "#FFFFFF", "2px 2px 4px #000000"
 else:
+    # LIGHT MODE VALUES
     bg_overlay, text_color, metric_c, shadow = "rgba(255,255,255,0.85)", "#1A1A1A", "#2E7D32", "none"
 
 st.markdown(f"""
