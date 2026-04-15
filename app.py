@@ -17,28 +17,7 @@ date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
 
-# --- 2.5 WELCOME SPLASH SCREEN ---
-if 'welcome_done' not in st.session_state:
-    placeholder = st.empty()
-    with placeholder.container():
-        st.markdown("""
-            <style>
-            .stApp { background-color: #F2EDE4 !important; }
-            .welcome-title { color: #000000 !important; font-size: 40px !important; font-weight: 800; text-align: center; margin-top: 10px; }
-            </style>
-        """, unsafe_allow_html=True)
-        left, mid, right = st.columns([1, 2, 1])
-        with mid:
-            st.write("##") 
-            st.image("logo.png", width=250)
-            st.markdown('<div class="welcome-title">BENJI GREL FARMER PORTAL</div>', unsafe_allow_html=True)
-            bar = st.progress(0)
-            for i in range(100):
-                time.sleep(0.03) 
-                bar.progress(i + 1)
-            time.sleep(0.5)
-    placeholder.empty()
-    st.session_state.welcome_done = True
+
     
 # --- 2.5 WELCOME SPLASH SCREEN (IMMERSIVE FULLSCREEN EDITION) ---
 if 'welcome_done' not in st.session_state:
