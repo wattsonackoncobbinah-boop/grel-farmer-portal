@@ -18,7 +18,6 @@ date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
 
-
 # --- 2.5 WELCOME SPLASH SCREEN (STRICTLY FULLSCREEN IMAGE) ---
 if 'welcome_done' not in st.session_state:
     placeholder = st.empty()
@@ -37,7 +36,7 @@ if 'welcome_done' not in st.session_state:
                 .stApp {{
                     margin: 0 !important;
                     padding: 0 !important;
-                    background-color: #012b15 !important; /* Matches the dark green in your logo */
+                    background-color: #012b15 !important;
                 }}
                 
                 .full-splash {{
@@ -47,11 +46,11 @@ if 'welcome_done' not in st.session_state:
                     width: 100vw;
                     height: 100vh;
                     background-image: url("data:image/png;base64,{bin_str}");
-                    background-size: contain; /* 👈 THIS IS THE CHANGE: Shows the FULL image */
+                    background-size: contain; 
                     background-position: center;
                     background-repeat: no-repeat;
                     z-index: 999999;
-                    background-color: #012b15; /* Background color fills the areas the image can't reach */
+                    background-color: #012b15;
                 }}
 
                 header, footer, .stDeployButton, [data-testid="stHeader"] {{
@@ -63,20 +62,10 @@ if 'welcome_done' not in st.session_state:
                 <div class="full-splash"></div>
             """, unsafe_allow_html=True)
             
+            # This line is now correctly indented
             time.sleep(6.0)
             
     except Exception as e:
-        pass
-
-    placeholder.empty()
-    st.session_state.welcome_done = True
-
-            
-            # Show the image for 3 seconds while calculations run
-            time.sleep(6.0)
-            
-    except Exception as e:
-        # If the image file is missing, the app will skip the splash so it doesn't crash
         pass
 
     placeholder.empty()
