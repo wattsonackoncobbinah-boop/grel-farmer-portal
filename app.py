@@ -17,58 +17,47 @@ date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
 
-# --- 2.5 WELCOME SPLASH SCREEN (IMAGE ONLY - FULLSCREEN) ---
+# --- 2.5 WELCOME SPLASH SCREEN (STRICTLY IMAGE ONLY) ---
 if 'welcome_done' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
         st.markdown(f"""
             <style>
-            /* 1. Force the image to cover every pixel of the app background */
+            /* 1. Eliminate all default Streamlit spacing and scrolling */
             .stApp {{
-                background-image: url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/Logo.png.png") !important;
-                background-size: cover !important;
-                background-position: center !important;
-                background-repeat: no-repeat !important;
-                background-attachment: fixed !important;
+                margin: 0px !important;
+                padding: 0px !important;
             }}
             
-            /* 2. Hide ALL Streamlit interface elements (bars, headers, menus) */
-            header {{ visibility: hidden !important; }}
-            footer {{ visibility: hidden !important; }}
-            [data-testid="stSidebarNav"] {{ display: none !important; }}
-            [data-testid="stHeader"] {{ display: none !important; }}
-            
-            /* 3. Create a transparent container to hold the progress bar at the very bottom */
-            .splash-container {{
-                height: 100vh;
+            /* 2. Create a fullscreen fixed layer for the image */
+            .img-splash {{
+                position: fixed;
+                top: 0;
+                left: 0;
                 width: 100vw;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end; /* Pushes progress bar to bottom */
-                align-items: center;
-                padding-bottom: 30px;
+                height: 100vh;
+                background-image: url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/Logo.png.png");
+                background-size: cover; /* Stretches to fill whole screen */
+                background-position: center;
+                background-repeat: no-repeat;
+                z-index: 999999; /* Higher than any other element */
             }}
-            
-            /* 4. Style the progress bar to be subtle so it doesn't ruin the picture */
-            .stProgress > div > div > div > div {{
-                background-color: #C9B037 !important; /* Gold matching your logo border */
-                height: 4px !important;
+
+            /* 3. Hide absolutely every other UI element */
+            header, footer, .stDeployButton, [data-testid="stHeader"] {{
+                display: none !important;
             }}
             </style>
             
-            <div class="splash-container">
-                </div>
+            <div class="img-splash"></div>
         """, unsafe_allow_html=True)
         
-        # This progress bar will appear as a thin gold line at the bottom
-        progress_bar = st.progress(0)
-        for percent in range(100):
-            time.sleep(0.01)
-            progress_bar.progress(percent + 1)
-        time.sleep(0.4)
+        # Internal timer to keep the image up for 3 seconds
+        time.sleep(3.0) 
         
     placeholder.empty()
     st.session_state.welcome_done = True
+
 
 
 # --- 3. AUTOMATION FUNCTIONS ---
