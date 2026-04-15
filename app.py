@@ -23,26 +23,23 @@ LOGO_URL = "logo.png"
 if 'welcome_done' not in st.session_state:
     placeholder = st.empty()
     
-    # Function to convert your local logo to a format the browser can't ignore
     def get_base64(bin_file):
         with open(bin_file, 'rb') as f:
             data = f.read()
         return base64.b64encode(data).decode()
 
     try:
-        # We use your logo.png which is already in your folder
         bin_str = get_base64("Logo.png.png") 
         
         with placeholder.container():
             st.markdown(f"""
                 <style>
-                /* 1. Force the app to have ZERO margins or padding */
                 .stApp {{
                     margin: 0 !important;
                     padding: 0 !important;
+                    background-color: #012b15 !important; /* Matches the dark green in your logo */
                 }}
                 
-                /* 2. Create a layer that sits ON TOP of everything else */
                 .full-splash {{
                     position: fixed;
                     top: 0;
@@ -50,16 +47,13 @@ if 'welcome_done' not in st.session_state:
                     width: 100vw;
                     height: 100vh;
                     background-image: url("data:image/png;base64,{bin_str}");
-                    background-size: cover; /* This makes it occupy the WHOLE screen */
+                    background-size: contain; /* 👈 THIS IS THE CHANGE: Shows the FULL image */
                     background-position: center;
                     background-repeat: no-repeat;
                     z-index: 999999;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    background-color: #012b15; /* Background color fills the areas the image can't reach */
                 }}
 
-                /* 3. Kill all Streamlit UI (Headers, Menus, Footers) */
                 header, footer, .stDeployButton, [data-testid="stHeader"] {{
                     display: none !important;
                     height: 0 !important;
@@ -68,6 +62,15 @@ if 'welcome_done' not in st.session_state:
                 
                 <div class="full-splash"></div>
             """, unsafe_allow_html=True)
+            
+            time.sleep(6.0)
+            
+    except Exception as e:
+        pass
+
+    placeholder.empty()
+    st.session_state.welcome_done = True
+
             
             # Show the image for 3 seconds while calculations run
             time.sleep(6.0)
