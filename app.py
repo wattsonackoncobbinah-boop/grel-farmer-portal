@@ -148,69 +148,63 @@ st.markdown(f"""
     [data-testid="stSidebar"] * {{ color: #1A1A1A !important; text-shadow: none !important; }}
     </style>
     """, unsafe_allow_html=True)
+    # --- 6. NAVIGATION TABS (THE MOBILE SLIDE FEATURE) ---
+# This creates a top menu that feels like sliding on a phone
+tab1, tab2 = st.tabs(["💰 Payout Calculator", "📰 Industry News"])
 
-# --- 7. MAIN CONTENT ---
-st.markdown(f"<h1 style='color:{text_color}; text-shadow:{shadow};'>🚜 BENJI GREL FARMER'S PORTAL</h1>", unsafe_allow_html=True)
-st.markdown(f"<h3 style='color:{text_color}; text-shadow:{shadow};'>Live Status: {today_str}</h3>", unsafe_allow_html=True)
-
-col_p, col_m = st.columns([1, 2])
-with col_p:
-    st.image("dad.jpg", width=300, caption="Portal Administrator")
-with col_m:
-    st.markdown(f"<h3 style='color:{text_color};'>Market Summary</h3>", unsafe_allow_html=True)
+with tab1:
+    # --- 7. MAIN CONTENT & MARKET SUMMARY ---
+    st.markdown(f"<h1 style='color:{text_color}; text-shadow:{shadow};'>🚜 BENJI GREL PORTAL</h1>", unsafe_allow_html=True)
+    
     m1, m2, m3 = st.columns(3)
     m1.metric("Exchange Rate", f"₵{usd_to_ghs}")
     m2.metric("GREL Gate Price", f"₵{current_grel_gate_price}")
     m3.metric("TCDA Floor", f"₵{tcda_min_price}")
 
-# --- 8. PAYOUT CALCULATOR ---
-st.divider()
-st.markdown(f"<h2 style='color:{text_color};'>💰 Payout Calculator</h2>", unsafe_allow_html=True)
-c1, c2, c3 = st.columns(3)
-with c1:
-    st.markdown(f"<span style='color:{text_color};'>Total Wet Weight (kg):</span>", unsafe_allow_html=True)
-    wet_kg = st.number_input("", value=1000, step=100, label_visibility="collapsed")
-with c2:
-    st.markdown(f"<span style='color:{text_color};'>Select DRC %:</span>", unsafe_allow_html=True)
-    drc_val = st.slider("", 40, 65, 52, label_visibility="collapsed")
-with c3:
-    deduct_loan = st.checkbox("Apply 25% Loan Deduction", value=True)
+    # --- 8. PAYOUT CALCULATOR ---
+    st.divider()
+    c1, c2, c3 = st.columns([1, 1, 1])
+    with c1:
+        wet_kg = st.number_input("Total Wet Weight (kg):", value=1000, step=100)
+    with c2:
+        drc_val = st.slider("Select DRC %:", 40, 65, 52)
+    with c3:
+        deduct_loan = st.checkbox("25% Loan Deduction", value=True)
 
-prediction_dry = max(round(1.76 * usd_to_ghs * 0.365, 2), tcda_min_price)
-wet_price = round(prediction_dry * (drc_val / 100), 2)
-net_total = round((wet_kg * wet_price) * 0.75, 2) if deduct_loan else round(wet_kg * wet_price, 2)
+    prediction_dry = max(round(1.76 * usd_to_ghs * 0.365, 2), tcda_min_price)
+    wet_price = round(prediction_dry * (drc_val / 100), 2)
+    net_total = round((wet_kg * wet_price) * 0.75, 2) if deduct_loan else round(wet_kg * wet_price, 2)
 
-r1, r2, r3 = st.columns(3)
-r1.metric("Predicted Dry Price", f"₵{prediction_dry}/kg")
-r2.metric("Your Wet Price", f"₵{wet_price}/kg")
-r3.metric("Take-Home", f"₵{net_total:,}")
+    r1, r2, r3 = st.columns(3)
+    r1.metric("Predicted Dry Price", f"₵{prediction_dry}/kg")
+    r2.metric("Your Wet Price", f"₵{wet_price}/kg")
+    r3.metric("Take-Home", f"₵{net_total:,}")
 
-# --- 9. THE CHART ---
-st.subheader("📈 Live Global Rubber Market")
-components.html('<div style="height:400px;"><div id="tv" style="height:100%;"></div><script src="https://s3.tradingview.com/tv.js"></script><script>new TradingView.widget({"autosize":true,"symbol":"SGX:TF1!","interval":"D","theme":"dark","container_id":"tv"});</script></div>', height=400)
+    # --- 9. THE CHART ---
+    st.subheader("📈 Global Market Trend")
+    components.html('<div style="height:300px;"><div id="tv" style="height:100%;"></div><script src="https://s3.tradingview.com/tv.js"></script><script>new TradingView.widget({"autosize":true,"symbol":"SGX:TF1!","interval":"D","theme":"dark","container_id":"tv"});</script></div>', height=300)
 
-# --- 10. NEWS DASHBOARD ---
-st.divider()
-st.markdown(f"<h2 style='color:{text_color};'>📰 Industry News ({date_range})</h2>", unsafe_allow_html=True)
-if st.button(f"🔄 Sync Feeds for {today_str}"):
-    st.cache_data.clear()
-    st.rerun()
+with tab2:
+    # --- 10. NEWS DASHBOARD ---
+    st.markdown(f"<h2 style='color:{text_color};'>📰 Industry News ({date_range})</h2>", unsafe_allow_html=True)
+    if st.button(f"🔄 Sync News Feeds"):
+        st.cache_data.clear()
+        st.rerun()
 
-col_l, col_i = st.columns(2)
-with col_l:
-    st.markdown(f"<h3 style='color:{text_color};'>🇬🇭 Local: Ahanta West</h3>", unsafe_allow_html=True)
     local_data = get_news_data("(GREL OR Apimanim OR Tarkwa OR Axim) rubber")
+    st.markdown(f"### 🇬🇭 Local: Ahanta West")
     if local_data:
         for entry in local_data:
-            st.markdown(f"🔗 <a href='{entry.link}' style='color:#00FF88; font-weight:bold;'>{entry.title}</a>", unsafe_allow_html=True)
-            st.markdown(f"<p style='color:{text_color}; font-size:12px; margin-top:-15px;'>📅 {entry.published[:16]}</p>", unsafe_allow_html=True)
-
-with col_i:
-    st.markdown(f"<h3 style='color:{text_color};'>🌍 Global Market News</h3>", unsafe_allow_html=True)
+            st.markdown(f"🔗 [{entry.title}]({entry.link})")
+            st.caption(f"📅 {entry.published[:16]}")
+    
+    st.divider()
     global_data = get_news_data("rubber market price global")
+    st.markdown(f"### 🌍 Global Market News")
     if global_data:
         for entry in global_data:
-            st.markdown(f"📈 <a href='{entry.link}' style='color:#00FF88; font-weight:bold;'>{entry.title}</a>", unsafe_allow_html=True)
-            st.markdown(f"<p style='color:{text_color}; font-size:12px; margin-top:-15px;'>Published: {entry.published[:16]}</p>", unsafe_allow_html=True)
+            st.markdown(f"📈 [{entry.title}]({entry.link})")
+            st.caption(f"Published: {entry.published[:16]}")
 
-st.markdown(f"<p style='text-align: center; color: gray; font-size: 11px;'>BENJI LIMITED | Auto-Updated: {today_str}</p>", unsafe_allow_html=True)
+st.markdown(f"<p style='text-align: center; color: gray; font-size: 11px;'>BENJI LIMITED | {today_str}</p>", unsafe_allow_html=True)
+
