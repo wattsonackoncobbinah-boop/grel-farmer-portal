@@ -31,7 +31,7 @@ if 'welcome_done' not in st.session_state:
 
     try:
         # We use your logo.png which is already in your folder
-        bin_str = get_base64("logo.png") 
+        bin_str = get_base64("Logo.png.png") 
         
         with placeholder.container():
             st.markdown(f"""
@@ -70,7 +70,7 @@ if 'welcome_done' not in st.session_state:
             """, unsafe_allow_html=True)
             
             # Show the image for 3 seconds while calculations run
-            time.sleep(3.0)
+            time.sleep(6.0)
             
     except Exception as e:
         # If the image file is missing, the app will skip the splash so it doesn't crash
