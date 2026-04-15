@@ -6,6 +6,7 @@ import datetime
 import feedparser
 from bs4 import BeautifulSoup
 import re
+import base64
 
 # --- 1. DYNAMIC DATE CALCULATIONS ---
 now = datetime.datetime.now()
@@ -17,44 +18,64 @@ date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
 
-# --- 2.5 WELCOME SPLASH SCREEN (STRICTLY IMAGE ONLY) ---
+
+# --- 2.5 WELCOME SPLASH SCREEN (STRICTLY FULLSCREEN IMAGE) ---
 if 'welcome_done' not in st.session_state:
     placeholder = st.empty()
-    with placeholder.container():
-        st.markdown(f"""
-            <style>
-            /* 1. Eliminate all default Streamlit spacing and scrolling */
-            .stApp {{
-                margin: 0px !important;
-                padding: 0px !important;
-            }}
-            
-            /* 2. Create a fullscreen fixed layer for the image */
-            .img-splash {{
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-                background-image: url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/Logo.png.png");
-                background-size: cover; /* Stretches to fill whole screen */
-                background-position: center;
-                background-repeat: no-repeat;
-                z-index: 999999; /* Higher than any other element */
-            }}
+    
+    # Function to convert your local logo to a format the browser can't ignore
+    def get_base64(bin_file):
+        with open(bin_file, 'rb') as f:
+            data = f.read()
+        return base64.b64encode(data).decode()
 
-            /* 3. Hide absolutely every other UI element */
-            header, footer, .stDeployButton, [data-testid="stHeader"] {{
-                display: none !important;
-            }}
-            </style>
+    try:
+        # We use your logo.png which is already in your folder
+        bin_str = get_base64("logo.png") 
+        
+        with placeholder.container():
+            st.markdown(f"""
+                <style>
+                /* 1. Force the app to have ZERO margins or padding */
+                .stApp {{
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }}
+                
+                /* 2. Create a layer that sits ON TOP of everything else */
+                .full-splash {{
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    background-image: url("data:image/png;base64,{bin_str}");
+                    background-size: cover; /* This makes it occupy the WHOLE screen */
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    z-index: 999999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }}
+
+                /* 3. Kill all Streamlit UI (Headers, Menus, Footers) */
+                header, footer, .stDeployButton, [data-testid="stHeader"] {{
+                    display: none !important;
+                    height: 0 !important;
+                }}
+                </style>
+                
+                <div class="full-splash"></div>
+            """, unsafe_allow_html=True)
             
-            <div class="img-splash"></div>
-        """, unsafe_allow_html=True)
-        
-        # Internal timer to keep the image up for 3 seconds
-        time.sleep(3.0) 
-        
+            # Show the image for 3 seconds while calculations run
+            time.sleep(3.0)
+            
+    except Exception as e:
+        # If the image file is missing, the app will skip the splash so it doesn't crash
+        pass
+
     placeholder.empty()
     st.session_state.welcome_done = True
 
