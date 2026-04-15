@@ -17,61 +17,59 @@ date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
 LOGO_URL = "logo.png"
 
-# --- 2.5 WELCOME SPLASH SCREEN (IMMERSIVE FULLSCREEN EDITION) ---
+# --- 2.5 WELCOME SPLASH SCREEN (IMAGE ONLY - FULLSCREEN) ---
 if 'welcome_done' not in st.session_state:
     placeholder = st.empty()
     with placeholder.container():
         st.markdown(f"""
             <style>
-            /* 🔥 Fullscreen background image with dark overlay for readability */
+            /* 1. Force the image to cover every pixel of the app background */
             .stApp {{
-                background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), 
-                            url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/Logo.png.png") !important;
+                background-image: url("https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/Logo.png.png") !important;
                 background-size: cover !important;
                 background-position: center !important;
                 background-repeat: no-repeat !important;
+                background-attachment: fixed !important;
             }}
-            /* Hide the standard top header during splash */
-            header {{ visibility: hidden; }}
             
-            .welcome-box {{
-                height: 85vh;
+            /* 2. Hide ALL Streamlit interface elements (bars, headers, menus) */
+            header {{ visibility: hidden !important; }}
+            footer {{ visibility: hidden !important; }}
+            [data-testid="stSidebarNav"] {{ display: none !important; }}
+            [data-testid="stHeader"] {{ display: none !important; }}
+            
+            /* 3. Create a transparent container to hold the progress bar at the very bottom */
+            .splash-container {{
+                height: 100vh;
+                width: 100vw;
                 display: flex;
                 flex-direction: column;
+                justify-content: flex-end; /* Pushes progress bar to bottom */
                 align-items: center;
-                justify-content: center;
-                text-align: center;
-                color: white;
+                padding-bottom: 30px;
             }}
-            .welcome-title {{ 
-                color: #C9B037 !important; /* Gold to match logo */
-                font-size: 42px !important; 
-                font-weight: 900; 
-                text-shadow: 3px 3px 12px rgba(0,0,0,0.8);
-                margin-bottom: 5px;
-            }}
-            /* Customizing the progress bar color */
+            
+            /* 4. Style the progress bar to be subtle so it doesn't ruin the picture */
             .stProgress > div > div > div > div {{
-                background-color: #C9B037 !important;
+                background-color: #C9B037 !important; /* Gold matching your logo border */
+                height: 4px !important;
             }}
             </style>
-            <div class="welcome-box">
-                <div class="welcome-title">BENJI GREL PORTAL</div>
-                <p style="font-size: 18px; text-shadow: 2px 2px 5px black; font-weight: 600;">
-                    Optimizing Rubber Farming for the Western Region
-                </p>
-            </div>
+            
+            <div class="splash-container">
+                </div>
         """, unsafe_allow_html=True)
         
-        # Smooth progress bar animation
+        # This progress bar will appear as a thin gold line at the bottom
         progress_bar = st.progress(0)
         for percent in range(100):
-            time.sleep(0.015)
+            time.sleep(0.01)
             progress_bar.progress(percent + 1)
-        time.sleep(0.6)
+        time.sleep(0.4)
         
     placeholder.empty()
     st.session_state.welcome_done = True
+
 
 # --- 3. AUTOMATION FUNCTIONS ---
 def get_live_exchange_rate():
