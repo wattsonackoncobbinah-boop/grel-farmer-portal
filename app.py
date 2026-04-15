@@ -47,8 +47,8 @@ if 'welcome_done' not in st.session_state:
                     position: fixed;
                     top: 0;
                     left: 0;
-                    width: 50vw;
-                    height: 100vh;
+                    width: 20vw;
+                    height: 20vh;
                     background-image: url("data:image/png;base64,{bin_str}");
                     background-size: cover; /* This makes it occupy the WHOLE screen */
                     background-position: center;
