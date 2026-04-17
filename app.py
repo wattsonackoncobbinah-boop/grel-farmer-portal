@@ -8,35 +8,29 @@ from bs4 import BeautifulSoup
 import re
 import base64
 
+# --- 1. CONFIG & PWA SETUP (THE ICON FIX) ---
+LOGO_URL = "IMG_1264.jpeg" 
+icon_cache_buster = f"https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/{LOGO_URL}?v=1"
 
-# --- THE FINAL PWA FIX ---
-icon_url = "https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/IMG_1264.jpeg?v=1"
+st.set_page_config(page_title="BENJI Farmer Portal", layout="wide", page_icon=LOGO_URL)
 
-st.set_page_config(page_title="BENJI Portal", layout="wide", page_icon="IMG_1264.jpeg")
-
+# This part only affects the Home Screen icon
 st.markdown(f"""
     <head>
-        <link rel="apple-touch-icon" href="{icon_url}">
+        <link rel="apple-touch-icon" href="{icon_cache_buster}">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-title" content="BENJI">
+        <link rel="manifest" href="./manifest.json">
     </head>
 """, unsafe_allow_html=True)
 
-
-# --- 1. DYNAMIC DATE CALCULATIONS ---
+# --- 2. DYNAMIC DATE CALCULATIONS ---
 now = datetime.datetime.now()
 today_str = now.strftime("%B %d, %Y")
 two_days_ago = now - datetime.timedelta(days=2)
 date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 
-# --- 2. CONFIG & LOGO SETUP ---
-LOGO_URL = "IMG_1264.jpeg"  # This matches your new uploaded file name
-st.set_page_config(page_title="BENJI Farmer Portal", layout="wide", page_icon=LOGO_URL)
-
-
-
-
-# --- 2.5 WELCOME SPLASH SCREEN (STRICTLY FULLSCREEN IMAGE) ---
+# --- 2.5 WELCOME SPLASH SCREEN (KEEPING YOUR ORIGINAL) ---
 if 'welcome_done' not in st.session_state:
     placeholder = st.empty()
     
@@ -48,6 +42,7 @@ if 'welcome_done' not in st.session_state:
         except: return ""
 
     try:
+        # We keep this pointing to your original splash image
         bin_str = get_base64("Logo.png.png") 
         if bin_str:
             with placeholder.container():
@@ -68,6 +63,7 @@ if 'welcome_done' not in st.session_state:
     except Exception: pass
     placeholder.empty()
     st.session_state.welcome_done = True
+
 
 # --- 3. AUTOMATION FUNCTIONS (WITH OFFLINE SAFETY) ---
 def get_live_exchange_rate():
