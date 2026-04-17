@@ -8,15 +8,13 @@ from bs4 import BeautifulSoup
 import re
 import base64
 
-# --- PWA ENABLER ---
+# Update this line in your Section 2.5 of the Python script
 st.markdown(f"""
-    <link rel="manifest" href="manifest.json">
-    <script>
-      if ('serviceWorker' in navigator) {{
-        navigator.serviceWorker.register('sw.js');
-      }}
-    </script>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="IMG_1264.jpeg"> 
+    <meta name="apple-mobile-web-app-capable" content="yes">
 """, unsafe_allow_html=True)
+
 
 
 # --- 1. DYNAMIC DATE CALCULATIONS ---
