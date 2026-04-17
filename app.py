@@ -23,7 +23,10 @@ today_str = now.strftime("%B %d, %Y")
 two_days_ago = now - datetime.timedelta(days=2)
 date_range = f"{two_days_ago.strftime('%b %d')} - {now.strftime('%b %d, %Y')}"
 
-st.set_page_config(page_title="GREL Farmer Portal", layout="wide", page_icon="🌳")
+# --- 2. CONFIG & LOGO SETUP ---
+LOGO_URL = "IMG_1264.jpeg"  # This matches your new uploaded file name
+st.set_page_config(page_title="BENJI Farmer Portal", layout="wide", page_icon=LOGO_URL)
+
 
 
 
