@@ -23,68 +23,57 @@ if 'welcome_done' not in st.session_state:
     placeholder = st.empty()
     
     def get_base64(bin_file):
-        with open(bin_file, 'rb') as f:
-            data = f.read()
-        return base64.b64encode(data).decode()
+        try:
+            with open(bin_file, 'rb') as f:
+                data = f.read()
+            return base64.b64encode(data).decode()
+        except: return ""
 
     try:
         bin_str = get_base64("Logo.png.png") 
-        
-        with placeholder.container():
-            st.markdown(f"""
-                <style>
-                .stApp {{
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    background-color: #012b15 !important;
-                }}
-                
-                .full-splash {{
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100vw;
-                    height: 100vh;
-                    background-image: url("data:image/png;base64,{bin_str}");
-                    background-size: contain; 
-                    background-position: center;
-                    background-repeat: no-repeat;
-                    z-index: 999999;
-                    background-color: #012b15;
-                }}
-
-                header, footer, .stDeployButton, [data-testid="stHeader"] {{
-                    display: none !important;
-                    height: 0 !important;
-                }}
-                </style>
-                
-                <div class="full-splash"></div>
-            """, unsafe_allow_html=True)
-            
-            time.sleep(6.0)
-            
-    except Exception as e:
-        pass
-
+        if bin_str:
+            with placeholder.container():
+                st.markdown(f"""
+                    <style>
+                    .stApp {{ margin: 0 !important; padding: 0 !important; background-color: #012b15 !important; }}
+                    .full-splash {{
+                        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                        background-image: url("data:image/png;base64,{bin_str}");
+                        background-size: contain; background-position: center; background-repeat: no-repeat;
+                        z-index: 999999; background-color: #012b15;
+                    }}
+                    header, footer, .stDeployButton, [data-testid="stHeader"] {{ display: none !important; height: 0 !important; }}
+                    </style>
+                    <div class="full-splash"></div>
+                """, unsafe_allow_html=True)
+                time.sleep(6.0)
+    except Exception: pass
     placeholder.empty()
     st.session_state.welcome_done = True
 
-# --- 3. AUTOMATION FUNCTIONS ---
+# --- 3. AUTOMATION FUNCTIONS (WITH OFFLINE SAFETY) ---
 def get_live_exchange_rate():
     try:
         url = "https://api.exchangerate-api.com/v4/latest/USD"
-        return round(requests.get(url, timeout=5).json()['rates']['GHS'], 2)
-    except: return 14.50
+        rate = round(requests.get(url, timeout=3).json()['rates']['GHS'], 2)
+        st.session_state['last_fx'] = rate  # Save for offline use
+        return rate
+    except:
+        # Fallback to last known good rate or hardcoded default
+        return st.session_state.get('last_fx', 14.50)
 
 def scrape_rubber_price(url):
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=3)
         soup = BeautifulSoup(response.text, 'html.parser')
         matches = re.findall(r"₵\s?(\d+\.\d+)|GHS\s?(\d+\.\d+)", soup.get_text())
-        if matches: return float([m for m in matches[0] if m][0])
-        return None
-    except: return None
+        if matches:
+            price = float([m for m in matches[0] if m][0])
+            st.session_state[f'last_price_{url}'] = price
+            return price
+        return st.session_state.get(f'last_price_{url}')
+    except:
+        return st.session_state.get(f'last_price_{url}')
 
 @st.cache_data(ttl=3600)
 def get_news_data(search_term):
@@ -95,21 +84,21 @@ def get_news_data(search_term):
         return feed.entries[:5]
     except: return []
 
-# --- 4. SESSION STATE & SIDEBAR (UPDATED FOR LIGHT DEFAULT) ---
+# --- 4. SESSION STATE & SIDEBAR ---
 if 'sidebar_color' not in st.session_state: st.session_state.sidebar_color = "#DFE8DF"
-# DEFAULT THEME IS NOW LIGHT
 if 'theme_mode' not in st.session_state: st.session_state.theme_mode = "Light"
 
 with st.sidebar:
     st.image(LOGO_URL, use_container_width=True)
     st.subheader("🖥️ Display Settings")
     
-    # Toggle defaults to True (Light)
     toggle_theme = st.toggle("Enable Dark Mode", value=(st.session_state.theme_mode == "Dark"))
     st.session_state.theme_mode = "Dark" if toggle_theme else "Light"
     
     st.divider()
+    # Security: Use a cleaner admin key check
     admin_key = st.text_input("🔑 Programmer Key:", type="password")
+    
     if admin_key == "yaw2026":
         with st.expander("🎨 Sidebar Theme"):
             chosen_color = st.color_picker("Sidebar Color", st.session_state.sidebar_color)
@@ -126,6 +115,7 @@ with st.sidebar:
             tcda_min_price = scrape_rubber_price("https://tcda.gov.gh/") or 9.11
             current_grel_gate_price = scrape_rubber_price("http://grelghana.com/") or 8.30
     else:
+        # User mode: Pull data but handle offline scenarios
         usd_to_ghs = get_live_exchange_rate()
         tcda_min_price = 9.11
         current_grel_gate_price = 8.30
@@ -134,7 +124,6 @@ with st.sidebar:
 if st.session_state.theme_mode == "Dark":
     bg_overlay, text_color, metric_c, shadow = "rgba(0,0,0,0.8)", "#FFFFFF", "#FFFFFF", "2px 2px 4px #000000"
 else:
-    # LIGHT MODE VALUES
     bg_overlay, text_color, metric_c, shadow = "rgba(255,255,255,0.85)", "#1A1A1A", "#2E7D32", "none"
 
 st.markdown(f"""
