@@ -8,6 +8,17 @@ from bs4 import BeautifulSoup
 import re
 import base64
 
+# --- PWA ENABLER ---
+st.markdown(f"""
+    <link rel="manifest" href="manifest.json">
+    <script>
+      if ('serviceWorker' in navigator) {{
+        navigator.serviceWorker.register('sw.js');
+      }}
+    </script>
+""", unsafe_allow_html=True)
+
+
 # --- 1. DYNAMIC DATE CALCULATIONS ---
 now = datetime.datetime.now()
 today_str = now.strftime("%B %d, %Y")
