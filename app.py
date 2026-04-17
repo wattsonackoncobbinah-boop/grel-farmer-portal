@@ -8,13 +8,19 @@ from bs4 import BeautifulSoup
 import re
 import base64
 
-# Update this line in your Section 2.5 of the Python script
-st.markdown(f"""
-    <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="IMG_1264.jpeg"> 
-    <meta name="apple-mobile-web-app-capable" content="yes">
-""", unsafe_allow_html=True)
 
+# --- THE FINAL PWA FIX ---
+icon_url = "https://raw.githubusercontent.com/wattsonackoncobbinah-boop/BENJI-grel-farmers-portal/main/IMG_1264.jpeg?v=1"
+
+st.set_page_config(page_title="BENJI Portal", layout="wide", page_icon="IMG_1264.jpeg")
+
+st.markdown(f"""
+    <head>
+        <link rel="apple-touch-icon" href="{icon_url}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-title" content="BENJI">
+    </head>
+""", unsafe_allow_html=True)
 
 
 # --- 1. DYNAMIC DATE CALCULATIONS ---
